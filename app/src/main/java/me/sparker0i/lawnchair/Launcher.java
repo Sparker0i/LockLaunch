@@ -24,7 +24,6 @@ import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.ActivityManager;
 import android.app.ActivityOptions;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -138,6 +137,8 @@ import me.sparker0i.lawnchair.util.ViewOnDrawExecutor;
 import me.sparker0i.lawnchair.widget.PendingAddWidgetInfo;
 import me.sparker0i.lawnchair.widget.WidgetHostViewLoader;
 import me.sparker0i.lawnchair.widget.WidgetsContainerView;
+import me.sparker0i.lock.preferences.Preferences;
+import me.sparker0i.question.activity.SplashActivity;
 import me.sparker0i.wallpaperpicker.WallpaperPickerActivity;
 
 /**
@@ -371,6 +372,9 @@ public class Launcher extends Activity
     protected void onCreate(Bundle savedInstanceState) {
         FeatureFlags.INSTANCE.loadThemePreference(this);
         super.onCreate(savedInstanceState);
+
+        if (!new Preferences(this).getLaunched())
+            startActivity(new Intent(this , SplashActivity.class));
 
         setScreenOrientation();
 
@@ -963,6 +967,9 @@ public class Launcher extends Activity
         }
 
         mDisableEditing = Utilities.getPrefs(this).getLockDesktop();
+
+        if (!new Preferences(this).getLaunched())
+            startActivity(new Intent(this , SplashActivity.class));
     }
 
     private void reloadIcons() {
@@ -977,6 +984,8 @@ public class Launcher extends Activity
         InstallShortcutReceiver.enableInstallQueue();
 
         super.onPause();
+        if (!new Preferences(this).getLaunched())
+            startActivity(new Intent(this , SplashActivity.class));
         mPaused = true;
         mDragController.cancelDrag();
         mDragController.resetLastGestureUpTime();

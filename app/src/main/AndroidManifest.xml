@@ -36,6 +36,10 @@
     <uses-permission android:name="${applicationId}.permission.WRITE_SETTINGS" />
     <uses-permission android:name="${applicationId}.permission.QSB" />
     <uses-permission android:name="android.permission.REORDER_TASKS" />
+    <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
 
     <application
         android:name="me.sparker0i.lawnchair.App"
@@ -49,6 +53,21 @@
         android:largeHeap="true"
         android:restoreAnyVersion="true"
         android:supportsRtl="true">
+        <activity android:name="me.sparker0i.question.activity.SplashActivity"
+            android:theme="@android:style/Theme.Material.Light">
+        </activity>
+        <activity android:name="me.sparker0i.question.activity.CategoryChooser"
+            android:theme="@android:style/Theme.Material.Light"/>
+        <activity android:name="me.sparker0i.question.activity.DisableLock"
+            android:theme="@android:style/Theme.Material.Light"/>
+        <activity
+            android:name="me.sparker0i.lock.activity.LockActivity"
+            android:label="@string/app_name"
+            android:excludeFromRecents="true" >
+        </activity>
+
+        <service android:name="me.sparker0i.lock.service.ScreenService" />
+        <receiver android:name="me.sparker0i.lock.receiver.ScreenReceiver" />
         <activity
             android:name="me.sparker0i.lawnchair.Launcher"
             android:clearTaskOnLaunch="true"
