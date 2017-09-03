@@ -22,9 +22,12 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.app.KeyguardManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -75,6 +78,9 @@ import me.sparker0i.lawnchair.config.FeatureFlags;
 import me.sparker0i.lawnchair.graphics.IconShapeOverride;
 import me.sparker0i.lawnchair.preferences.IPreferenceProvider;
 import me.sparker0i.lawnchair.preferences.PreferenceFlags;
+import me.sparker0i.lock.activity.LockActivity;
+import me.sparker0i.lock.service.ScreenService;
+import me.sparker0i.question.activity.CategoryChooser;
 
 /**
  * Settings activity for Launcher. Currently implements the following setting: Allow rotation
@@ -223,7 +229,12 @@ public class SettingsActivity extends AppCompatActivity implements PreferenceFra
                     ((PreferenceCategory) findPreference("prefCat_homeScreen"))
                         .removePreference(findPreference(PreferenceFlags.KEY_PREF_PIXEL_STYLE_ICONS));
                 }
-            } else if (getContent() == R.xml.launcher_about_preferences) {
+            }
+            else if (getContent() == R.xml.launcher_lock_preferences) {
+                Preference prefLockEnabled = findPreference(FeatureFlags.KEY_ENABLE_LOCK);
+                prefLockEnabled.setOnPreferenceChangeListener(this);
+            }
+            else if (getContent() == R.xml.launcher_about_preferences) {
                 findPreference("about_version").setSummary(BuildConfig.VERSION_NAME);
                 if (BuildConfig.TRAVIS && !BuildConfig.TAGGED_BUILD) {
                     findPreference("about_changelog").setSummary(Utilities.getChangelog());
@@ -260,6 +271,12 @@ public class SettingsActivity extends AppCompatActivity implements PreferenceFra
                         if (Utilities.getPrefs(context).getShowWeather() && Utilities.isAwarenessApiEnabled(context)) {
                             checkPermission(Manifest.permission.ACCESS_FINE_LOCATION);
                         }
+                        break;
+                    case FeatureFlags.KEY_ENABLE_LOCK:
+                        if (me.sparker0i.question.Utilities.isLockEnabled(getActivity()))
+                            me.sparker0i.question.Utilities.showLockEnabled(getActivity());
+                        context = getActivity();
+                        context.startService(new Intent(context , ScreenService.class));
                         break;
                 }
                 return true;
@@ -308,6 +325,11 @@ public class SettingsActivity extends AppCompatActivity implements PreferenceFra
                         dialog.setContentView(R.layout.dialog_translators);
                         dialog.show();
                         break;
+                    case FeatureFlags.KEY_LOAD_QUESTIONS:
+                        me.sparker0i.question.Utilities.loadQuestions(getActivity());
+                        break;
+                    case FeatureFlags.KEY_SELECT_CATEGORIES:
+                        startActivity(new Intent(getActivity() , CategoryChooser.class));
                     default:
                         return false;
                 }
@@ -351,5 +373,14 @@ public class SettingsActivity extends AppCompatActivity implements PreferenceFra
             return fragment;
         }
 
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 101) {
+            if (me.sparker0i.question.Utilities.isLockEnabled(this)) {
+                /*Do something here*/
+            }
+        }
     }
 }

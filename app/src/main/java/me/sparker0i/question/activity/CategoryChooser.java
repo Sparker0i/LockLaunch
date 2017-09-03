@@ -78,13 +78,15 @@ public class CategoryChooser extends Activity {
                 List<Category> catList = ((CategoryAdapter) mAdapter).getCategoriesList();
                 new Preferences(context).setCategoryPreferences(catList);
 
-                KeyguardManager manager = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
+                /*KeyguardManager manager = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
                 if((Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && manager.isDeviceSecure()) || isDeviceSecured())
                     startActivity(new Intent(CategoryChooser.this , DisableLock.class));
                 else {
                     new Preferences(context).setLaunched();
                     startService(new Intent(CategoryChooser.this, ScreenService.class));
-                    startActivity(new Intent(CategoryChooser.this , Launcher.class));                }
+                    startActivity(new Intent(CategoryChooser.this , Launcher.class));
+                }*/
+                finish();
             }
         });
     }
