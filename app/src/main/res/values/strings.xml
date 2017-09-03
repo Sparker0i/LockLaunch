@@ -405,6 +405,12 @@
     <string name="units_metric">Metric</string>
     <string name="units_imperial">Imperial</string>
 
+    <!-- Lock Settings -->
+    <string name="lock_title">Lock</string>
+    <string name="pref_cat_enable_lock">Enable Lock</string>
+    <string name="pref_load_questions">Refresh Questions</string>
+    <string name="pref_select_categories">Select Categories</string>
+
     <!-- Default units to use, either 'metric' or 'imperial' -->
     <string name="pref_cat_weather">Weather</string>
     <string name="pref_weather_title">Enable weather</string>

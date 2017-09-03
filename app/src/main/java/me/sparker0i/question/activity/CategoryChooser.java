@@ -24,7 +24,6 @@ import java.util.concurrent.ExecutionException;
 
 import me.sparker0i.lawnchair.Launcher;
 import me.sparker0i.lawnchair.R;
-import me.sparker0i.lock.activity.LockActivity;
 import me.sparker0i.lock.preferences.Preferences;
 import me.sparker0i.lock.service.ScreenService;
 import me.sparker0i.lock.widget.CategoryAdapter;
@@ -32,7 +31,7 @@ import me.sparker0i.question.database.DatabaseHandler;
 import me.sparker0i.question.model.Category;
 
 public class CategoryChooser extends Activity {
-    DatabaseHandler db;
+    static DatabaseHandler db;
     Handler handler;
     RecyclerView mRecyclerView;
     RecyclerView.Adapter mAdapter;
@@ -90,7 +89,7 @@ public class CategoryChooser extends Activity {
         });
     }
 
-    private class BackgroundThread extends AsyncTask<Void , Void , List<Category>> {
+    private static class BackgroundThread extends AsyncTask<Void , Void , List<Category>> {
 
         @Override
         protected List<Category> doInBackground(Void... params) {

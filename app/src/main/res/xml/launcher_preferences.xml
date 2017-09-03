@@ -33,6 +33,11 @@
         app:content="@xml/launcher_behavior_preferences" />
 
     <me.sparker0i.lawnchair.settings.ui.SubPreference
+        android:title="@string/lock_title"
+        android:icon="@drawable/ic_lock_black_24dp"
+        app:content="@xml/launcher_lock_preferences" />
+
+    <me.sparker0i.lawnchair.settings.ui.SubPreference
         android:title="@string/debug_pref_title"
         android:icon="@drawable/ic_debug"
         app:content="@xml/launcher_debug_preferences"
