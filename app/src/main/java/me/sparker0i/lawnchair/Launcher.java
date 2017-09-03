@@ -164,7 +164,7 @@ public class Launcher extends Activity
     private static final int REQUEST_EDIT_ICON = 14;
 
     private static final float BOUNCE_ANIMATION_TENSION = 1.3f;
-    
+
     private static final int SOFT_INPUT_MODE_DEFAULT =
             WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN;
     private static final int SOFT_INPUT_MODE_ALL_APPS =
@@ -372,9 +372,6 @@ public class Launcher extends Activity
     protected void onCreate(Bundle savedInstanceState) {
         FeatureFlags.INSTANCE.loadThemePreference(this);
         super.onCreate(savedInstanceState);
-
-        if (!new Preferences(this).getLaunched())
-            startActivity(new Intent(this , SplashActivity.class));
 
         setScreenOrientation();
 
@@ -967,9 +964,6 @@ public class Launcher extends Activity
         }
 
         mDisableEditing = Utilities.getPrefs(this).getLockDesktop();
-
-        if (!new Preferences(this).getLaunched())
-            startActivity(new Intent(this , SplashActivity.class));
     }
 
     private void reloadIcons() {
@@ -984,8 +978,6 @@ public class Launcher extends Activity
         InstallShortcutReceiver.enableInstallQueue();
 
         super.onPause();
-        if (!new Preferences(this).getLaunched())
-            startActivity(new Intent(this , SplashActivity.class));
         mPaused = true;
         mDragController.cancelDrag();
         mDragController.resetLastGestureUpTime();

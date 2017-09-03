@@ -31,14 +31,6 @@ public class Preferences {
         }
     }
 
-    public void setLaunched() {
-        prefs.edit().putBoolean("launched" , true).apply();
-    }
-
-    public boolean getLaunched() {
-        return prefs.getBoolean("launched" , false);
-    }
-
     public HashMap<String , Boolean> getCategoryPreferences() {
         Task task = new Task();
         try {

@@ -276,12 +276,26 @@ public class SettingsActivity extends AppCompatActivity implements PreferenceFra
                         if (me.sparker0i.question.Utilities.isLockEnabled(getActivity()))
                             me.sparker0i.question.Utilities.showLockEnabled(getActivity());
                         context = getActivity();
-                        context.startService(new Intent(context , ScreenService.class));
+                        if (!findPreference(FeatureFlags.KEY_ENABLE_LOCK).isEnabled())
+                            context.startService(new Intent(context , ScreenService.class));
+                        else
+                            context.stopService(new Intent(context , ScreenService.class));
                         break;
                 }
                 return true;
             }
             return false;
+        }
+
+        @Override
+        public void onActivityResult(int requestCode, int resultCode, Intent data) {
+            if (requestCode == 101) {
+                if (me.sparker0i.question.Utilities.isLockEnabled(getActivity())) {
+                    getPreferenceManager().setSharedPreferencesName(LauncherFiles.SHARED_PREFERENCES_KEY);
+                    Preference prefLockEnabled = findPreference(FeatureFlags.KEY_ENABLE_LOCK);
+                    prefLockEnabled.setEnabled(false);
+                }
+            }
         }
 
         @Override
@@ -373,14 +387,5 @@ public class SettingsActivity extends AppCompatActivity implements PreferenceFra
             return fragment;
         }
 
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 101) {
-            if (me.sparker0i.question.Utilities.isLockEnabled(this)) {
-                /*Do something here*/
-            }
-        }
     }
 }
