@@ -12,8 +12,7 @@
             android:key="pref_load_questions"
             android:title="@string/pref_load_questions"
             android:summary="Click to load a new set of questions (if available)"
-            android:dependency="pref_enable_lock"
-            android:entries="@array/unitsTexts" />
+            android:dependency="pref_enable_lock" />
 
         <Preference
             android:key="pref_select_categories"

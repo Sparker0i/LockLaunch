@@ -38,6 +38,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -60,25 +61,8 @@ import me.sparker0i.lawnchair.config.FeatureFlags;
 import me.sparker0i.lawnchair.graphics.IconShapeOverride;
 import me.sparker0i.lawnchair.preferences.IPreferenceProvider;
 import me.sparker0i.lawnchair.preferences.PreferenceFlags;
-import me.sparker0i.lawnchair.DumbImportExportTask;
-import me.sparker0i.lawnchair.LauncherAppState;
-import me.sparker0i.lawnchair.LauncherFiles;
-import me.sparker0i.lawnchair.Utilities;
-import me.sparker0i.lawnchair.blur.BlurWallpaperProvider;
-import me.sparker0i.lawnchair.config.FeatureFlags;
-import me.sparker0i.lawnchair.graphics.IconShapeOverride;
-import me.sparker0i.lawnchair.preferences.IPreferenceProvider;
-import me.sparker0i.lawnchair.preferences.PreferenceFlags;
-import me.sparker0i.lawnchair.DumbImportExportTask;
-import me.sparker0i.lawnchair.LauncherAppState;
-import me.sparker0i.lawnchair.LauncherFiles;
-import me.sparker0i.lawnchair.Utilities;
-import me.sparker0i.lawnchair.blur.BlurWallpaperProvider;
-import me.sparker0i.lawnchair.config.FeatureFlags;
-import me.sparker0i.lawnchair.graphics.IconShapeOverride;
-import me.sparker0i.lawnchair.preferences.IPreferenceProvider;
-import me.sparker0i.lawnchair.preferences.PreferenceFlags;
-import me.sparker0i.lock.activity.LockActivity;
+import me.sparker0i.lock.activity.LockSettingsActivity;
+import me.sparker0i.lock.preferences.Preferences;
 import me.sparker0i.lock.service.ScreenService;
 import me.sparker0i.question.activity.CategoryChooser;
 
@@ -191,7 +175,10 @@ public class SettingsActivity extends AppCompatActivity implements PreferenceFra
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             getPreferenceManager().setSharedPreferencesName(LauncherFiles.SHARED_PREFERENCES_KEY);
-            addPreferencesFromResource(R.xml.launcher_preferences);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                addPreferencesFromResource(R.xml.launcher_preferences);
+            else
+                addPreferencesFromResource(R.xml.launcher_preferences_upto_22);
         }
 
         @Override
@@ -248,6 +235,8 @@ public class SettingsActivity extends AppCompatActivity implements PreferenceFra
                 String[] eminemQuotes = getResources().getStringArray(R.array.eminem_quotes);
                 int index = new Random().nextInt(eminemQuotes.length);
                 eminemPref.setSummary(eminemQuotes[index]);
+            } else if (getContent() == R.xml.launcher_lock_preferences_upto_22) {
+
             }
         }
 
@@ -340,7 +329,10 @@ public class SettingsActivity extends AppCompatActivity implements PreferenceFra
                         dialog.show();
                         break;
                     case FeatureFlags.KEY_LOAD_QUESTIONS:
-                        me.sparker0i.question.Utilities.loadQuestions(getActivity());
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                            me.sparker0i.question.Utilities.loadQuestions(getContext());
+                        else
+                            startActivity(new Intent(getActivity() , LockSettingsActivity.class));
                         break;
                     case FeatureFlags.KEY_SELECT_CATEGORIES:
                         startActivity(new Intent(getActivity() , CategoryChooser.class));

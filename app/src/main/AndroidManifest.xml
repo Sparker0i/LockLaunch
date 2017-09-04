@@ -37,39 +37,42 @@
     <uses-permission android:name="${applicationId}.permission.QSB" />
     <uses-permission android:name="android.permission.REORDER_TASKS" />
     <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
     <application
-        android:name="me.sparker0i.lawnchair.App"
-        android:backupAgent="me.sparker0i.lawnchair.LauncherBackupAgent"
+        android:name=".App"
+        android:backupAgent=".LauncherBackupAgent"
         android:fullBackupContent="@xml/backupscheme"
         android:fullBackupOnly="true"
         android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"
-        android:roundIcon="@mipmap/ic_launcher_round"
         android:label="@string/app_name"
         android:largeHeap="true"
         android:restoreAnyVersion="true"
+        android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true">
-        <activity android:name="me.sparker0i.question.activity.SplashActivity"
-            android:theme="@android:style/Theme.Material.Light">
-        </activity>
-        <activity android:name="me.sparker0i.question.activity.CategoryChooser"
-            android:theme="@android:style/Theme.Material.Light"/>
-        <activity android:name="me.sparker0i.question.activity.DisableLock"
-            android:theme="@android:style/Theme.Material.Light"/>
+        <activity
+            android:name="me.sparker0i.question.activity.SplashActivity"
+            android:theme="@android:style/Theme.Material.Light"></activity>
+        <activity
+            android:name="me.sparker0i.question.activity.CategoryChooser"
+            android:theme="@android:style/Theme.Material.Light" />
+        <activity
+            android:name="me.sparker0i.question.activity.DisableLock"
+            android:theme="@android:style/Theme.Material.Light" />
         <activity
             android:name="me.sparker0i.lock.activity.LockActivity"
-            android:label="@string/app_name"
-            android:excludeFromRecents="true" >
-        </activity>
+            android:excludeFromRecents="true"
+            android:label="@string/app_name"></activity>
 
         <service android:name="me.sparker0i.lock.service.ScreenService" />
+
         <receiver android:name="me.sparker0i.lock.receiver.ScreenReceiver" />
+
         <activity
-            android:name="me.sparker0i.lawnchair.Launcher"
+            android:name=".Launcher"
             android:clearTaskOnLaunch="true"
             android:configChanges="keyboard|keyboardHidden|navigation"
             android:enabled="true"
@@ -90,7 +93,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="me.sparker0i.lawnchair.settings.ui.SettingsActivity"
+            android:name=".settings.ui.SettingsActivity"
             android:autoRemoveFromRecents="true"
             android:label="@string/settings_button_text"
             android:theme="@style/SettingsTheme">
@@ -127,38 +130,36 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="me.sparker0i.lawnchair.kustomsupport.AutoFinishTransparentActivity"
+            android:name=".kustomsupport.AutoFinishTransparentActivity"
             android:theme="@style/Theme.Transparent" />
 
         <provider
+            android:name=".kustomsupport.Kustom5SecsProvider"
             android:authorities="${applicationId}.kustomsupport.kustom5secsprovider"
-            android:name="me.sparker0i.lawnchair.kustomsupport.Kustom5SecsProvider"
             android:exported="true"
             android:grantUriPermissions="true" />
-
-
         <provider
-            android:name="me.sparker0i.lawnchair.LauncherProvider"
+            android:name=".LauncherProvider"
             android:authorities="${applicationId}.settings"
             android:exported="true"
             android:readPermission="me.sparker0i.lawnchair.permission.READ_SETTINGS"
             android:writePermission="me.sparker0i.lawnchair.permission.WRITE_SETTINGS" />
 
         <receiver
-            android:name="me.sparker0i.lawnchair.InstallShortcutReceiver"
+            android:name=".InstallShortcutReceiver"
             android:permission="com.android.launcher.permission.INSTALL_SHORTCUT">
             <intent-filter>
                 <action android:name="com.android.launcher.action.INSTALL_SHORTCUT" />
             </intent-filter>
         </receiver>
-        <receiver android:name="me.sparker0i.lawnchair.AppWidgetsRestoredReceiver">
+        <receiver android:name=".AppWidgetsRestoredReceiver">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_HOST_RESTORED" />
             </intent-filter>
         </receiver>
 
         <service
-            android:name="me.sparker0i.lawnchair.notification.NotificationListener"
+            android:name=".notification.NotificationListener"
             android:label="@string/notification_listener_label"
             android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
             <intent-filter>
@@ -166,7 +167,7 @@
             </intent-filter>
         </service>
         <service
-            android:name="me.sparker0i.lawnchair.dynamicui.ColorExtractionService"
+            android:name=".dynamicui.ColorExtractionService"
             android:exported="false"
             android:label="@string/color_extraction_label"
             android:process=":color_extraction" />
@@ -176,25 +177,26 @@
             android:value="true" />
 
         <activity
-            android:name="me.sparker0i.lawnchair.iconpack.EditIconActivity"
-            android:parentActivityName="me.sparker0i.lawnchair.Launcher"
+            android:name=".iconpack.EditIconActivity"
+            android:parentActivityName=".Launcher"
             android:theme="@style/SettingsTheme" />
         <activity
-            android:name="me.sparker0i.lawnchair.iconpack.IconPickerActivity"
-            android:parentActivityName="me.sparker0i.lawnchair.iconpack.EditIconActivity"
+            android:name=".iconpack.IconPickerActivity"
+            android:parentActivityName=".iconpack.EditIconActivity"
             android:theme="@style/SettingsTheme" />
 
         <meta-data
             android:name="com.google.android.awareness.API_KEY"
             android:value="${awarenessApiKey}" />
-
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="${awarenessApiKey}" />
-        
-        <meta-data 
+        <meta-data
             android:name="android.max_aspect"
             android:value="2.1" />
+
+        <activity android:name="me.sparker0i.lock.activity.LockSettingsActivity"
+            android:theme="@style/Theme.AppCompat"/>
     </application>
 
 </manifest>
