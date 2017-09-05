@@ -54,7 +54,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Click to Load a Set Of New Questions (if available)"
-                android:textColor="@android:color/secondary_text_dark" />
+                android:textColor="@android:color/secondary_text_dark_nodisable" />
         </LinearLayout>
 
         <LinearLayout
@@ -79,7 +79,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Select the Category Of questions you want to see in the Lock Screen"
-                android:textColor="@android:color/secondary_text_dark" />
+                android:textColor="@android:color/secondary_text_dark_nodisable" />
         </LinearLayout>
 
     </android.support.constraint.ConstraintLayout>
