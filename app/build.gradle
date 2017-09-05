@@ -25,6 +25,10 @@ android {
     compileSdkVersion 26
     buildToolsVersion "26.0.1"
 
+    dataBinding {
+        enabled true
+    }
+
     signingConfigs {
         travis {
             storeFile file("debug.jks")

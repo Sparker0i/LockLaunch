@@ -196,7 +196,7 @@
             android:value="2.1" />
 
         <activity android:name="me.sparker0i.lock.activity.LockSettingsActivity"
-            android:theme="@style/Theme.AppCompat"/>
+            android:theme="@style/Theme.AppCompat.Light"/>
     </application>
 
 </manifest>

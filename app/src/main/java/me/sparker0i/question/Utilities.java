@@ -22,6 +22,7 @@ import com.google.gson.Gson;
 
 import java.lang.reflect.Method;
 
+import me.sparker0i.lock.preferences.LockType;
 import me.sparker0i.question.database.DatabaseHandler;
 import me.sparker0i.question.model.Question;
 import me.sparker0i.question.model.QuestionHelper;
@@ -73,38 +74,14 @@ public class Utilities {
 
     public static boolean isLockEnabled(Context context) {
         KeyguardManager manager = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
-        return ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && manager.isDeviceSecure()) || isDeviceSecured(context));
-    }
-
-    private static boolean isDeviceSecured(Context context)
-    {
-        String LOCKSCREEN_UTILS = "com.android.internal.widget.LockPatternUtils";
-        try
-        {
-            Class<?> lockUtilsClass = Class.forName(LOCKSCREEN_UTILS);
-            // "this" is a Context, in my case an Activity
-            Object lockUtils = lockUtilsClass.getConstructor(Context.class).newInstance(context);
-            Method method = lockUtilsClass.getMethod("getActivePasswordQuality");
-
-            int lockProtectionLevel = (Integer)method.invoke(lockUtils); // Thank you esme_louise for the cast hint
-            if(lockProtectionLevel >= DevicePolicyManager.PASSWORD_QUALITY_NUMERIC)
-            {
-                return true;
-            }
-        }
-        catch (Exception e)
-        {
-            Log.e("reflectInternalUtils", "ex:"+e);
-        }
-        return false;
+        return ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && manager.isDeviceSecure()) || LockType.isLockEnabled(context));
     }
 
     public static void showLockEnabled(final Context context) {
         final MaterialDialog dialog = new MaterialDialog.Builder(context)
                 .title("Lock Screen Enabled")
                 .content("Please Disable Your Android Lock Screen before you continue")
-                .cancelable(false)
-                .progress(true , 0)
+                .positiveText("OK")
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {

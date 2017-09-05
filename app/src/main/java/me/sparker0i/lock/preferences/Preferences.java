@@ -54,4 +54,12 @@ public class Preferences {
             return map;
         }
     }
+
+    public void setLockEnabled(boolean value) {
+        prefs.edit().putBoolean("lock" , value).apply();
+    }
+
+    public boolean isLockEnabled() {
+        return prefs.getBoolean("lock" , false);
+    }
 }
