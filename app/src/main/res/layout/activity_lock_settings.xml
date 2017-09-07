@@ -21,7 +21,7 @@
 
             <TextView
                 android:id="@+id/enableLockText"
-                android:layout_width="235dp"
+                android:layout_width="231dp"
                 android:layout_height="match_parent"
                 android:text="@string/pref_cat_enable_lock"
                 android:textAppearance="@android:style/TextAppearance.Material.Medium" />

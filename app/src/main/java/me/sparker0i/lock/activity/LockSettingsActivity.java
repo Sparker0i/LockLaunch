@@ -1,6 +1,5 @@
 package me.sparker0i.lock.activity;
 
-import android.app.admin.DevicePolicyManager;
 import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
@@ -12,12 +11,11 @@ import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 
-import java.lang.reflect.Method;
-
 import me.sparker0i.lawnchair.R;
 import me.sparker0i.lawnchair.databinding.ActivityLockSettingsBinding;
 import me.sparker0i.lock.preferences.LockType;
 import me.sparker0i.lock.preferences.Preferences;
+import me.sparker0i.lock.service.ScreenService;
 import me.sparker0i.question.Utilities;
 import me.sparker0i.question.activity.CategoryChooser;
 
@@ -114,12 +112,14 @@ public class LockSettingsActivity extends AppCompatActivity{
         if (code == -1) {
             aSwitch.setChecked(false);
             prefs.setLockEnabled(false);
+            stopService(new Intent(this , ScreenService.class));
             loadLayout.setEnabled(false);
             selectLayout.setEnabled(false);
         }
         else if (code == 1) {
             aSwitch.setChecked(true);
             prefs.setLockEnabled(true);
+            startService(new Intent(this , ScreenService.class));
             loadLayout.setEnabled(true);
             selectLayout.setEnabled(true);
         }
