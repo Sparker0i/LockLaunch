@@ -14,12 +14,6 @@
         android:id="@+id/btn_on"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="On" />
-
-    <Button
-        android:id="@+id/btn_off"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Off" />
+        android:text="UNLOCK" />
 
 </LinearLayout>

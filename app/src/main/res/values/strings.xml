@@ -409,6 +409,7 @@
     <string name="lock_title">Lock</string>
     <string name="pref_cat_enable_lock">Enable Lock</string>
     <string name="pref_load_questions">Refresh Questions</string>
+    <string name="pref_go_to_lock_settings">Lock Settings</string>
     <string name="pref_select_categories">Select Categories</string>
 
     <!-- Default units to use, either 'metric' or 'imperial' -->

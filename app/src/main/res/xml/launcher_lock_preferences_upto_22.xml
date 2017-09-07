@@ -6,8 +6,8 @@
 
         <Preference
             android:key="pref_load_questions"
-            android:title="@string/pref_load_questions"
-            android:summary="Click to load a new set of questions (if available)" />
+            android:title="@string/pref_go_to_lock_settings"
+            android:summary="Click here to visit the Lock Screen Settings Page" />
 
     </PreferenceCategory>
 </PreferenceScreen>

@@ -64,8 +64,9 @@
             android:theme="@android:style/Theme.Material.Light" />
         <activity
             android:name="me.sparker0i.lock.activity.LockActivity"
-            android:excludeFromRecents="true"
-            android:label="@string/app_name"></activity>
+            android:launchMode="singleInstance"
+            android:theme="@android:style/Theme.Material.Light"
+            android:label="@string/app_name"/>
 
         <service android:name="me.sparker0i.lock.service.ScreenService" />
 
