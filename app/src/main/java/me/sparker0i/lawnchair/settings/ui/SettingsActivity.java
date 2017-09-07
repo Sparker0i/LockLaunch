@@ -19,6 +19,7 @@ package me.sparker0i.lawnchair.settings.ui;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.Dialog;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
@@ -225,7 +226,7 @@ public class SettingsActivity extends AppCompatActivity implements PreferenceFra
                 }
             }
             else if (getContent() == R.xml.launcher_lock_preferences) {
-                Preference prefLockEnabled = findPreference(FeatureFlags.KEY_ENABLE_LOCK);
+                SwitchPreference prefLockEnabled = (SwitchPreference) findPreference(FeatureFlags.KEY_ENABLE_LOCK);
                 prefLockEnabled.setOnPreferenceChangeListener(this);
             }
             else if (getContent() == R.xml.launcher_about_preferences) {
@@ -253,6 +254,16 @@ public class SettingsActivity extends AppCompatActivity implements PreferenceFra
             prefWeatherApiKey.setEnabled(!awarenessApiEnabled);
         }
 
+        private boolean isMyServiceRunning(Context context , Class<?> serviceClass) {
+            ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+            for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+                if (serviceClass.getName().equals(service.service.getClassName())) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         @Override
         public boolean onPreferenceChange(Preference preference, Object newValue) {
             if (preference.getKey() != null) {
@@ -267,16 +278,20 @@ public class SettingsActivity extends AppCompatActivity implements PreferenceFra
                         }
                         break;
                     case FeatureFlags.KEY_ENABLE_LOCK:
-                        if (preference.isEnabled()) {
-                            if (me.sparker0i.question.Utilities.isLockEnabled(getContext()))
-                                showLockEnabled();
-                            if (!findPreference(FeatureFlags.KEY_ENABLE_LOCK).isEnabled())
-                                getContext().startService(new Intent(getContext(), ScreenService.class));
-                            else
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            if (!((SwitchPreference) preference).isChecked()) {
+                                if (me.sparker0i.question.Utilities.isLockEnabled(getContext()))
+                                    showLockEnabled();
+                                else {
+                                    SwitchPreference prefLockEnabled = (SwitchPreference) findPreference(FeatureFlags.KEY_ENABLE_LOCK);
+                                    if (!prefLockEnabled.isChecked())
+                                        getContext().startService(new Intent(getContext(), ScreenService.class));
+                                    else
+                                        getContext().stopService(new Intent(getContext(), ScreenService.class));
+                                }
+                            } else {
                                 getContext().stopService(new Intent(getContext(), ScreenService.class));
-                        }
-                        else {
-                            getContext().stopService(new Intent(getContext(), ScreenService.class));
+                            }
                         }
                         break;
                 }
