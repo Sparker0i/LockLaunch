@@ -3,6 +3,8 @@ package me.sparker0i.lock.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
+import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -10,6 +12,9 @@ import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.Switch;
+
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 
 import me.sparker0i.lawnchair.R;
 import me.sparker0i.lawnchair.databinding.ActivityLockSettingsBinding;
@@ -50,7 +55,7 @@ public class LockSettingsActivity extends AppCompatActivity{
                 else {
                     if (Utilities.isLockEnabled(context)) {
                         Log.i("Yeah" , "Is Locked");
-                        Utilities.showLockEnabled(context);
+                        showLockEnabled();
                     }
                     else {
                         Log.i("Yeah" , "Is Not Locked");
@@ -67,7 +72,7 @@ public class LockSettingsActivity extends AppCompatActivity{
                 }
                 else {
                     if (isDeviceSecured()) {
-                        Utilities.showLockEnabled(context);
+                        showLockEnabled();
                     }
                     else {
                         invertLock(1);
@@ -87,6 +92,21 @@ public class LockSettingsActivity extends AppCompatActivity{
                 startActivity(new Intent(context , CategoryChooser.class));
             }
         });
+    }
+
+    public void showLockEnabled() {
+        final MaterialDialog dialog = new MaterialDialog.Builder(this)
+                .title("Lock Screen Enabled")
+                .content("Please Disable Your Android Lock Screen before you continue")
+                .positiveText("OK")
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        startActivityForResult(new Intent(Settings.ACTION_SECURITY_SETTINGS) , 101);
+                    }
+                })
+                .build();
+        dialog.show();
     }
 
     private boolean isDeviceSecured()

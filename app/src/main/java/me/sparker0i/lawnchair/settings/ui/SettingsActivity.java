@@ -34,7 +34,11 @@ import android.preference.Preference;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceScreen;
+import android.preference.SwitchPreference;
+import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -47,6 +51,9 @@ import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
+
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 
 import java.util.Random;
 
@@ -235,8 +242,6 @@ public class SettingsActivity extends AppCompatActivity implements PreferenceFra
                 String[] eminemQuotes = getResources().getStringArray(R.array.eminem_quotes);
                 int index = new Random().nextInt(eminemQuotes.length);
                 eminemPref.setSummary(eminemQuotes[index]);
-            } else if (getContent() == R.xml.launcher_lock_preferences_upto_22) {
-
             }
         }
 
@@ -262,13 +267,17 @@ public class SettingsActivity extends AppCompatActivity implements PreferenceFra
                         }
                         break;
                     case FeatureFlags.KEY_ENABLE_LOCK:
-                        if (me.sparker0i.question.Utilities.isLockEnabled(getActivity()))
-                            me.sparker0i.question.Utilities.showLockEnabled(getActivity());
-                        context = getActivity();
-                        if (!findPreference(FeatureFlags.KEY_ENABLE_LOCK).isEnabled())
-                            context.startService(new Intent(context , ScreenService.class));
-                        else
-                            context.stopService(new Intent(context , ScreenService.class));
+                        if (preference.isEnabled()) {
+                            if (me.sparker0i.question.Utilities.isLockEnabled(getContext()))
+                                showLockEnabled();
+                            if (!findPreference(FeatureFlags.KEY_ENABLE_LOCK).isEnabled())
+                                getContext().startService(new Intent(getContext(), ScreenService.class));
+                            else
+                                getContext().stopService(new Intent(getContext(), ScreenService.class));
+                        }
+                        else {
+                            getContext().stopService(new Intent(getContext(), ScreenService.class));
+                        }
                         break;
                 }
                 return true;
@@ -276,13 +285,29 @@ public class SettingsActivity extends AppCompatActivity implements PreferenceFra
             return false;
         }
 
+        public void showLockEnabled() {
+            final MaterialDialog dialog = new MaterialDialog.Builder(getContext())
+                    .title("Lock Screen Enabled")
+                    .content("Please Disable Your Android Lock Screen before you continue")
+                    .positiveText("OK")
+                    .onPositive(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            startActivityForResult(new Intent(Settings.ACTION_SECURITY_SETTINGS) , 101);
+                        }
+                    })
+                    .build();
+            dialog.show();
+        }
+
         @Override
         public void onActivityResult(int requestCode, int resultCode, Intent data) {
+            Log.i("Yeah" , "Called");
             if (requestCode == 101) {
-                if (me.sparker0i.question.Utilities.isLockEnabled(getActivity())) {
+                if (me.sparker0i.question.Utilities.isLockEnabled(getContext())) {
                     getPreferenceManager().setSharedPreferencesName(LauncherFiles.SHARED_PREFERENCES_KEY);
-                    Preference prefLockEnabled = findPreference(FeatureFlags.KEY_ENABLE_LOCK);
-                    prefLockEnabled.setEnabled(false);
+                    SwitchPreference prefLockEnabled = (SwitchPreference) findPreference(FeatureFlags.KEY_ENABLE_LOCK);
+                    prefLockEnabled.setChecked(false);
                 }
             }
         }

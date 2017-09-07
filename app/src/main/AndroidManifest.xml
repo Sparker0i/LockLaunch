@@ -54,9 +54,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true">
         <activity
-            android:name="me.sparker0i.question.activity.SplashActivity"
-            android:theme="@android:style/Theme.Material.Light"></activity>
-        <activity
             android:name="me.sparker0i.question.activity.CategoryChooser"
             android:theme="@android:style/Theme.Material.Light" />
         <activity

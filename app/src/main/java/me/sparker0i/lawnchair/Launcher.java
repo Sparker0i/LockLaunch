@@ -137,8 +137,7 @@ import me.sparker0i.lawnchair.util.ViewOnDrawExecutor;
 import me.sparker0i.lawnchair.widget.PendingAddWidgetInfo;
 import me.sparker0i.lawnchair.widget.WidgetHostViewLoader;
 import me.sparker0i.lawnchair.widget.WidgetsContainerView;
-import me.sparker0i.lock.preferences.Preferences;
-import me.sparker0i.question.activity.SplashActivity;
+import me.sparker0i.lock.activity.LockActivity;
 import me.sparker0i.wallpaperpicker.WallpaperPickerActivity;
 
 /**
@@ -210,6 +209,20 @@ public class Launcher extends Activity
     int NEW_APPS_ANIMATION_INACTIVE_TIMEOUT_SECONDS = 5;
     @Thunk
     static int NEW_APPS_ANIMATION_DELAY = 500;
+
+    private static boolean locked;
+
+    public void launchActivity() {
+        startActivity(new Intent(this , LockActivity.class));
+    }
+
+    public static boolean isLocked() {
+        return locked;
+    }
+
+    public static void setLocked(boolean  value) {
+        locked = value;
+    }
 
     private final BroadcastReceiver mUiBroadcastReceiver = new BroadcastReceiver() {
 
@@ -864,17 +877,21 @@ public class Launcher extends Activity
     @Override
     protected void onStart() {
         super.onStart();
-        FirstFrameAnimatorHelper.setIsVisible(true);
+        if (locked)
+            launchActivity();
+        else {
+            FirstFrameAnimatorHelper.setIsVisible(true);
 
-        if (Utilities.ATLEAST_NOUGAT_MR1) {
-            mAppWidgetHost.startListening();
+            if (Utilities.ATLEAST_NOUGAT_MR1) {
+                mAppWidgetHost.startListening();
+            }
+
+            if (!isWorkspaceLoading()) {
+                NotificationListener.setNotificationsChangedListener(mPopupDataProvider);
+            }
+
+            mLauncherTab.getClient().onStart();
         }
-
-        if (!isWorkspaceLoading()) {
-            NotificationListener.setNotificationsChangedListener(mPopupDataProvider);
-        }
-
-        mLauncherTab.getClient().onStart();
     }
 
     @Override

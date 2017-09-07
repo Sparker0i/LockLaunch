@@ -1,17 +1,11 @@
 package me.sparker0i.question;
 
-import android.app.Activity;
 import android.app.KeyguardManager;
-import android.app.admin.DevicePolicyManager;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Build;
-import android.provider.Settings;
-import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -19,8 +13,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
-
-import java.lang.reflect.Method;
 
 import me.sparker0i.lock.preferences.LockType;
 import me.sparker0i.question.database.DatabaseHandler;
@@ -75,20 +67,5 @@ public class Utilities {
     public static boolean isLockEnabled(Context context) {
         KeyguardManager manager = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
         return ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && manager.isDeviceSecure()) || LockType.isLockEnabled(context));
-    }
-
-    public static void showLockEnabled(final Context context) {
-        final MaterialDialog dialog = new MaterialDialog.Builder(context)
-                .title("Lock Screen Enabled")
-                .content("Please Disable Your Android Lock Screen before you continue")
-                .positiveText("OK")
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        ((Activity) context).startActivityForResult(new Intent(Settings.ACTION_SECURITY_SETTINGS) , 101);
-                    }
-                })
-                .build();
-        dialog.show();
     }
 }
