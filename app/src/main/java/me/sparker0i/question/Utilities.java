@@ -16,6 +16,7 @@ import com.google.gson.Gson;
 
 import me.sparker0i.lock.preferences.LockType;
 import me.sparker0i.question.database.DatabaseHandler;
+import me.sparker0i.question.model.Category;
 import me.sparker0i.question.model.Question;
 import me.sparker0i.question.model.QuestionHelper;
 
@@ -61,6 +62,7 @@ public class Utilities {
             QuestionHelper.QuestionList qn = questionz.list.get(i);
             Question question = new Question(qn.getQN() , qn.getA() , qn.getB() , qn.getC() , qn.getD() , questionz.getCAT() , qn.getANS());
             db.addQuestion(question);
+            db.addCategory(new Category(questionz.getCAT() , false));
         }
     }
 

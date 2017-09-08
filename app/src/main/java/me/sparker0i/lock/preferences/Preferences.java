@@ -14,11 +14,9 @@ import me.sparker0i.question.model.Category;
 
 public class Preferences {
     private static SharedPreferences prefs;
-    private Context context;
 
     public Preferences(Context context) {
         prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        this.context = context;
     }
 
     public SharedPreferences getPrefs() {
@@ -28,30 +26,6 @@ public class Preferences {
     public void setCategoryPreferences(List<Category> cat) {
         for (int i = 0; i < cat.size(); ++i) {
             prefs.edit().putBoolean("selected_" + cat.get(i).getName().toLowerCase() , cat.get(i).isSelected()).apply();
-        }
-    }
-
-    public HashMap<String , Boolean> getCategoryPreferences() {
-        Task task = new Task();
-        try {
-            return task.execute(context).get();
-        }
-        catch (InterruptedException | ExecutionException ex) {
-            ex.printStackTrace();
-            return null;
-        }
-    }
-
-    static class Task extends AsyncTask<Context , Void , HashMap<String , Boolean>> {
-        @Override
-        protected HashMap<String, Boolean> doInBackground(Context... params) {
-            DatabaseHandler db = new DatabaseHandler(params[0]);
-            List<String> cat = db.getCategories();
-            HashMap<String , Boolean> map = new HashMap<>();
-            for (int i = 0; i < cat.size(); ++i) {
-                map.put(cat.get(i) , prefs.getBoolean("selected_" + cat.get(i).toLowerCase() , false));
-            }
-            return map;
         }
     }
 

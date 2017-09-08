@@ -10,18 +10,22 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import me.sparker0i.lock.service.ScreenService;
+import me.sparker0i.question.model.Category;
 import me.sparker0i.question.model.Question;
 
 public class DatabaseHandler extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1;
     private static final String DATABASE_NAME = "questiondatabase";
     private static final String TABLE_QUESTIONS = "question";
+    private static final String TABLE_CATEGORIES = "categories";
 
     private static final String KEY_QN = "qn";
     private static final String KEY_A = "a";
     private static final String KEY_B = "b";
     private static final String KEY_C = "c";
     private static final String KEY_D = "d";
+    private static final String KEY_ON = "on";
     private static final String KEY_CAT = "cat";
     private static final String KEY_ANS = "ans";
 
@@ -42,6 +46,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 + KEY_CAT + " TEXT, "
                 + "PRIMARY KEY (" + KEY_QN + "," + KEY_A + "," + KEY_B + "," + KEY_C + "," + KEY_D + "," + KEY_CAT + "," + KEY_ANS + ")" + " )";
         db.execSQL(CREATE_QUESTION_TABLE);
+
+        String CREATE_CATEGORIES_TABLE = "CREATE TABLE " + TABLE_CATEGORIES + "("
+                + KEY_CAT + " TEXT PRIMARY KEY, "
+                + KEY_ON + " INT)";
+        db.execSQL(CREATE_CATEGORIES_TABLE);
     }
 
     // Upgrading database  
@@ -49,9 +58,23 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // Drop older table if existed  
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_QUESTIONS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_CATEGORIES);
 
         // Create tables again  
         onCreate(db);
+    }
+
+    public void addCategory(Category category) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_CAT , category.getName());
+        values.put(KEY_ON , category.isSelected());
+
+        Log.i("values : " , category.getName() + category.isSelected());
+
+        db.insert(TABLE_CATEGORIES , null , values);
+        db.close();
     }
 
     public void addQuestion(Question question) {
@@ -75,18 +98,19 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.close(); // Closing database connection  
     }
 
-    public List<String> getCategories() {
+    public List<Category> getCategories() {
         SQLiteDatabase db = this.getReadableDatabase();
 
-        String query = "SELECT DISTINCT " + KEY_CAT + " FROM " + TABLE_QUESTIONS;
+        String query = "SELECT * FROM " + TABLE_CATEGORIES;
         Cursor cursor = db.rawQuery(query , null);
-        List<String> categoryList = new ArrayList<>();
+
+        List<Category> categoryList = new ArrayList<>();
 
         if (cursor != null) {
             cursor.moveToFirst();
             if (cursor.moveToFirst()) {
                 do {
-                    categoryList.add(cursor.getString(0));
+                    categoryList.add(new Category(cursor.getString(0) , cursor.getInt(1) == 1));
                 }
                 while (cursor.moveToNext());
             }
@@ -95,10 +119,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return categoryList;
     }
 
-    Question getRandomQuestion(String cat) {
+    public Question getRandomQuestion() {
         SQLiteDatabase db = this.getReadableDatabase();
 
-        String query = "SELECT * FROM " + TABLE_QUESTIONS + " ORDER BY RANDOM() WHERE cat = " + cat + " LIMIT 1";
+        String query = "SELECT * FROM " + TABLE_QUESTIONS + " , " + TABLE_CATEGORIES + " WHERE " + KEY_ON + " = 1 AND " + TABLE_CATEGORIES + "." + KEY_CAT + " = " + TABLE_QUESTIONS + "." + KEY_CAT + " LIMIT 1";
         Cursor cursor = db.rawQuery(query , null);
         return new Question(cursor.getString(0),
                 cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(5), cursor.getString(6));

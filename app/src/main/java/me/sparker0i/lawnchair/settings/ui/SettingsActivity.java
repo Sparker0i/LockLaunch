@@ -280,8 +280,10 @@ public class SettingsActivity extends AppCompatActivity implements PreferenceFra
                     case FeatureFlags.KEY_ENABLE_LOCK:
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                             if (!((SwitchPreference) preference).isChecked()) {
-                                if (me.sparker0i.question.Utilities.isLockEnabled(getContext()))
+                                if (me.sparker0i.question.Utilities.isLockEnabled(getContext())) {
+                                    ((SwitchPreference) preference).setChecked(false);
                                     showLockEnabled();
+                                }
                                 else {
                                     SwitchPreference prefLockEnabled = (SwitchPreference) findPreference(FeatureFlags.KEY_ENABLE_LOCK);
                                     if (!prefLockEnabled.isChecked())
@@ -323,6 +325,9 @@ public class SettingsActivity extends AppCompatActivity implements PreferenceFra
                     getPreferenceManager().setSharedPreferencesName(LauncherFiles.SHARED_PREFERENCES_KEY);
                     SwitchPreference prefLockEnabled = (SwitchPreference) findPreference(FeatureFlags.KEY_ENABLE_LOCK);
                     prefLockEnabled.setChecked(false);
+                }
+                else {
+                    getContext().startService(new Intent(getContext() , ScreenService.class));
                 }
             }
         }

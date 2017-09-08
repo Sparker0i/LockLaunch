@@ -57,11 +57,9 @@
             android:name="me.sparker0i.question.activity.CategoryChooser"
             android:theme="@android:style/Theme.Material.Light" />
         <activity
-            android:name="me.sparker0i.question.activity.DisableLock"
-            android:theme="@android:style/Theme.Material.Light" />
-        <activity
             android:name="me.sparker0i.lock.activity.LockActivity"
             android:launchMode="singleInstance"
+            android:excludeFromRecents="true"
             android:theme="@android:style/Theme.Material.Light"
             android:label="@string/app_name"/>
 

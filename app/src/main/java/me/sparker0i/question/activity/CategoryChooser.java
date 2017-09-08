@@ -42,8 +42,8 @@ public class CategoryChooser extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_category_chooser);
 
-        button = (Button) findViewById(R.id.button);
-        mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
+        button = findViewById(R.id.button);
+        mRecyclerView = findViewById(R.id.my_recycler_view);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -77,15 +77,6 @@ public class CategoryChooser extends Activity {
             public void onClick(View v) {
                 List<Category> catList = ((CategoryAdapter) mAdapter).getCategoriesList();
                 new Preferences(context).setCategoryPreferences(catList);
-
-                /*KeyguardManager manager = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
-                if((Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && manager.isDeviceSecure()) || isDeviceSecured())
-                    startActivity(new Intent(CategoryChooser.this , DisableLock.class));
-                else {
-                    new Preferences(context).setLaunched();
-                    startService(new Intent(CategoryChooser.this, ScreenService.class));
-                    startActivity(new Intent(CategoryChooser.this , Launcher.class));
-                }*/
                 finish();
             }
         });
@@ -95,36 +86,7 @@ public class CategoryChooser extends Activity {
 
         @Override
         protected List<Category> doInBackground(Void... params) {
-            List<String> categories = db.getCategories();
-            List<Category> catList = new ArrayList<>();
-            for (int i = 0; i < categories.size(); i++) {
-                Category cat = new Category(categories.get(i));
-                catList.add(cat);
-            }
-            return catList;
+            return db.getCategories();
         }
-    }
-
-    private boolean isDeviceSecured()
-    {
-        String LOCKSCREEN_UTILS = "com.android.internal.widget.LockPatternUtils";
-        try
-        {
-            Class<?> lockUtilsClass = Class.forName(LOCKSCREEN_UTILS);
-            // "this" is a Context, in my case an Activity
-            Object lockUtils = lockUtilsClass.getConstructor(Context.class).newInstance(this);
-            Method method = lockUtilsClass.getMethod("getActivePasswordQuality");
-
-            int lockProtectionLevel = (Integer)method.invoke(lockUtils); // Thank you esme_louise for the cast hint
-            if(lockProtectionLevel >= DevicePolicyManager.PASSWORD_QUALITY_NUMERIC)
-            {
-                return true;
-            }
-        }
-        catch (Exception e)
-        {
-            Log.e("reflectInternalUtils", "ex:"+e);
-        }
-        return false;
     }
 }

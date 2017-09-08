@@ -4,30 +4,50 @@ import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
+import android.widget.RadioButton;
 
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 import me.sparker0i.lawnchair.Launcher;
 import me.sparker0i.lawnchair.R;
+import me.sparker0i.lawnchair.databinding.ActivityLockBinding;
 import me.sparker0i.lock.DBHelper;
+import me.sparker0i.question.database.DatabaseHandler;
+import me.sparker0i.question.model.Question;
 
 @SuppressWarnings("deprecation")
 public class LockActivity extends Activity implements OnClickListener{
 
+    ActivityLockBinding binding;
+    RadioButton optA , optB , optC , optD;
+    Question question;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_lock);
+        binding = DataBindingUtil.setContentView(this , R.layout.activity_lock);
+        optA = binding.radio1;
+        optB = binding.radio2;
+        optC = binding.radio3;
+        optD = binding.radio4;
+        getQuestion();
         Launcher.setLocked(true);
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED|WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
 
         findViewById(R.id.btn_on).setOnClickListener(this);
+    }
+
+    public void getQuestion() {
+        DatabaseHandler db = new DatabaseHandler(this);
+        question = db.getRandomQuestion();
     }
 
     private void exitAppAnimate() {

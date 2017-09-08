@@ -7,7 +7,6 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
-
 import java.util.List;
 
 import me.sparker0i.lawnchair.R;
@@ -44,7 +43,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
                 Category cat = (Category) cb.getTag();
 
                 cat.setSelected(cb.isChecked());
-                categories.get(pos).setSelected(cb.isSelected());
+                categories.get(pos).setSelected(cb.isChecked());
             }
         });
     }
@@ -61,8 +60,8 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
         ViewHolder(View itemLayoutView) {
             super(itemLayoutView);
 
-            category = (TextView) itemLayoutView.findViewById(R.id.cat_name);
-            chkSelected = (CheckBox) itemLayoutView.findViewById(R.id.cat_selected);
+            category = itemLayoutView.findViewById(R.id.cat_name);
+            chkSelected = itemLayoutView.findViewById(R.id.cat_selected);
         }
     }
 }
