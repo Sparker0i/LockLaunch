@@ -10,7 +10,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import me.sparker0i.lock.service.ScreenService;
 import me.sparker0i.question.model.Category;
 import me.sparker0i.question.model.Question;
 
@@ -25,7 +24,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String KEY_B = "b";
     private static final String KEY_C = "c";
     private static final String KEY_D = "d";
-    private static final String KEY_ON = "on";
+    private static final String KEY_ON = "enabled";
     private static final String KEY_CAT = "cat";
     private static final String KEY_ANS = "ans";
 
@@ -98,6 +97,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.close(); // Closing database connection  
     }
 
+    public void updateCategory(String cat , boolean value) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("UPDATE " + TABLE_CATEGORIES + " SET " + KEY_ON + " = " + (value ? 1 : 0) + " WHERE " + KEY_CAT + " = \'" + cat + "\'");
+        db.close();
+    }
+
     public List<Category> getCategories() {
         SQLiteDatabase db = this.getReadableDatabase();
 
@@ -127,15 +132,4 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return new Question(cursor.getString(0),
                 cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(5), cursor.getString(6));
     }
-
-    public int getQuestionsCount() {
-        String countQuery = "SELECT  * FROM " + TABLE_QUESTIONS;
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery(countQuery, null);
-        cursor.close();
-
-        // return count  
-        return cursor.getCount();
-    }
-
 }  

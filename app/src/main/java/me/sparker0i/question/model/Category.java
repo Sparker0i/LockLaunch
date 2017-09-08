@@ -32,4 +32,8 @@ public class Category {
     public void setSelected(boolean selected) {
         isSelected = selected;
     }
+
+    public boolean getSelected() {
+        return isSelected;
+    }
 }
