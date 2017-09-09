@@ -2,6 +2,7 @@ package me.sparker0i.question.database;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -129,7 +130,17 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
         String query = "SELECT * FROM " + TABLE_QUESTIONS + " , " + TABLE_CATEGORIES + " WHERE " + KEY_ON + " = 1 AND " + TABLE_CATEGORIES + "." + KEY_CAT + " = " + TABLE_QUESTIONS + "." + KEY_CAT + " LIMIT 1";
         Cursor cursor = db.rawQuery(query , null);
-        return new Question(cursor.getString(0),
-                cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(5), cursor.getString(6));
+        ArrayList<Question> questions = new ArrayList<>();
+        if (cursor != null) {
+            cursor.moveToFirst();
+            if (cursor.moveToFirst())
+                do {
+                    questions.add(new Question(cursor.getString(0),
+                            cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(5), cursor.getString(6)));
+                }
+                while (cursor.moveToNext());
+        }
+        cursor.close();
+        return questions.get(new Random().nextInt(questions.size()));
     }
 }  
