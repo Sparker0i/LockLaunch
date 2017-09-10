@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.databinding.DataBindingUtil;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -34,35 +35,40 @@ public class LockActivity extends Activity implements OnClickListener{
     Question question;
     Context context;
     static DatabaseHandler db;
+    Handler handler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context = this;
+        handler = new Handler();
         binding = DataBindingUtil.setContentView(this , R.layout.activity_lock);
         optA = binding.radio1;
         optB = binding.radio2;
         optC = binding.radio3;
         optD = binding.radio4;
         quesText = binding.question;
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED|WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
+        findViewById(R.id.btn_on).setOnClickListener(this);
         db = new DatabaseHandler(this);
         try {
-            question = new BackgroundThread().get();
+            Log.i("Started" , "Background Thread");
+            question = new BackgroundThread().doInBackground();
         }
-        catch (InterruptedException | ExecutionException ex) {
+        catch (Exception ex) {
             ex.printStackTrace();
         }
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                quesText.setText(question.getQN());
+                optA.setText(question.getA());
+                optB.setText(question.getB());
+                optC.setText(question.getC());
+                optD.setText(question.getD());
+            }
+        });
         Launcher.setLocked(true);
-
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED|WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
-
-        findViewById(R.id.btn_on).setOnClickListener(this);
-
-        quesText.setText(question.getQN());
-        optA.setText(question.getA());
-        optB.setText(question.getB());
-        optC.setText(question.getC());
-        optD.setText(question.getD());
     }
 
     private void exitAppAnimate() {

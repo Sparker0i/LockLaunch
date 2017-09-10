@@ -128,19 +128,19 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public Question getRandomQuestion() {
         SQLiteDatabase db = this.getReadableDatabase();
 
-        String query = "SELECT * FROM " + TABLE_QUESTIONS + " , " + TABLE_CATEGORIES + " WHERE " + KEY_ON + " = 1 AND " + TABLE_CATEGORIES + "." + KEY_CAT + " = " + TABLE_QUESTIONS + "." + KEY_CAT + " LIMIT 1";
+        String query = "SELECT * FROM " + TABLE_QUESTIONS + " NATURAL JOIN " + TABLE_CATEGORIES;
         Cursor cursor = db.rawQuery(query , null);
-        ArrayList<Question> questions = new ArrayList<>();
+        ArrayList<Question> list = new ArrayList<>();
         if (cursor != null) {
             cursor.moveToFirst();
             if (cursor.moveToFirst())
                 do {
-                    questions.add(new Question(cursor.getString(0),
+                    list.add(new Question(cursor.getString(0),
                             cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(5), cursor.getString(6)));
                 }
                 while (cursor.moveToNext());
+            cursor.close();
         }
-        cursor.close();
-        return questions.get(new Random().nextInt(questions.size()));
+        return list.get(new Random().nextInt(list.size()));
     }
 }  
