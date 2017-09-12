@@ -12,10 +12,6 @@ public class QuestionHelper {
         return this.CAT;
     }
 
-    public void setCAT(String cat){
-        this.CAT = cat;
-    }
-
     public class QuestionList {
         @SerializedName("qn") private String QN;
         @SerializedName("a") private String A;
@@ -28,48 +24,24 @@ public class QuestionHelper {
             return this.QN;
         }
 
-        public void setQN(String qn) {
-            this.QN = qn;
-        }
-
         public String getA() {
             return this.A;
-        }
-
-        public void setA(String a) {
-            this.A = a;
         }
 
         public String getB() {
             return this.B;
         }
 
-        public void setB(String b) {
-            this.B = b;
-        }
-
         public String getC() {
             return this.C;
-        }
-
-        public void setC(String c) {
-            this.C = c;
         }
 
         public String getD() {
             return this.D;
         }
 
-        public void setD(String d) {
-            this.D = d;
-        }
-
         public String getANS() {
             return this.ANS;
-        }
-
-        public void setANS(String ans) {
-            this.ANS = ans;
         }
     }
 }

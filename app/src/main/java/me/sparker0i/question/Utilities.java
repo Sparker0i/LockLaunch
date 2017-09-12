@@ -68,6 +68,13 @@ public class Utilities {
 
     public static boolean isLockEnabled(Context context) {
         KeyguardManager manager = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
-        return ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && manager.isDeviceSecure()) || LockType.isLockEnabled(context));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+        {
+            if (manager.isDeviceSecure()) {
+                return true;
+            }
+            return false;
+        }
+        else return LockType.isLockEnabled(context);
     }
 }

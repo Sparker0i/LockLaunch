@@ -60,6 +60,20 @@
             </RelativeLayout>
         </android.support.v7.widget.CardView>
 
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_marginTop="100dp"
+            android:layout_height="100dp"
+            android:id="@+id/incorrect"
+            android:visibility="invisible"
+            android:background="@android:color/holo_red_dark">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:text="Incorrect Answer" />
+        </android.support.v7.widget.CardView>
+
         <Button
             android:id="@+id/btn_on"
             android:layout_width="match_parent"

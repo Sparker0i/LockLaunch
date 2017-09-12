@@ -8,6 +8,7 @@ import android.databinding.DataBindingUtil;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -16,14 +17,12 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import me.sparker0i.lawnchair.Launcher;
 import me.sparker0i.lawnchair.R;
 import me.sparker0i.lawnchair.databinding.ActivityLockBinding;
 import me.sparker0i.lock.DBHelper;
 import me.sparker0i.question.database.DatabaseHandler;
-import me.sparker0i.question.model.Category;
 import me.sparker0i.question.model.Question;
 
 @SuppressWarnings("deprecation")
@@ -31,6 +30,7 @@ public class LockActivity extends Activity implements OnClickListener{
 
     ActivityLockBinding binding;
     RadioButton optA , optB , optC , optD;
+    CardView incorrect;
     TextView quesText;
     Question question;
     Context context;
@@ -47,6 +47,7 @@ public class LockActivity extends Activity implements OnClickListener{
         optB = binding.radio2;
         optC = binding.radio3;
         optD = binding.radio4;
+        incorrect = binding.incorrect;
         quesText = binding.question;
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED|WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
         findViewById(R.id.btn_on).setOnClickListener(this);
@@ -90,12 +91,47 @@ public class LockActivity extends Activity implements OnClickListener{
 
         switch (v.getId()) {
             case R.id.btn_on:
-                Launcher.setLocked(false);
-                finish();
+                checkAnswer(binding.ansGroup.getCheckedRadioButtonId());
                 break;
         }
 
         db.close();
+    }
+
+    public void checkAnswer(int selected) {
+        switch(question.getANS()) {
+            case "a" :
+                if (selected == optA.getId())
+                    unlock();
+                else
+                    incorrect.setVisibility(View.VISIBLE);
+                break;
+            case "b" :
+                if (selected == optB.getId())
+                    unlock();
+                else
+                    incorrect.setVisibility(View.VISIBLE);
+                break;
+            case "c" :
+                if (selected == optC.getId())
+                    unlock();
+                else
+                    incorrect.setVisibility(View.VISIBLE);
+                break;
+            case "d" :
+                if (selected == optD.getId())
+                    unlock();
+                else
+                    incorrect.setVisibility(View.VISIBLE);
+                break;
+        }
+    }
+
+    private void unlock() {
+
+        Launcher.setLocked(false);
+        finish();
+        Log.i("Answer" , question.getANS());
     }
 
     @Override
