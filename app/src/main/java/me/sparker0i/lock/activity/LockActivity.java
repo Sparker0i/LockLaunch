@@ -101,37 +101,32 @@ public class LockActivity extends Activity implements OnClickListener{
     public void checkAnswer(int selected) {
         switch(question.getANS()) {
             case "a" :
-                if (selected == optA.getId())
-                    unlock();
-                else
-                    incorrect.setVisibility(View.VISIBLE);
+                check(selected , optA);
                 break;
             case "b" :
-                if (selected == optB.getId())
-                    unlock();
-                else
-                    incorrect.setVisibility(View.VISIBLE);
+                check(selected , optB);
                 break;
             case "c" :
-                if (selected == optC.getId())
-                    unlock();
-                else
-                    incorrect.setVisibility(View.VISIBLE);
+                check(selected , optC);
                 break;
             case "d" :
-                if (selected == optD.getId())
-                    unlock();
-                else
-                    incorrect.setVisibility(View.VISIBLE);
+                check(selected , optD);
                 break;
         }
     }
 
     private void unlock() {
-
+        incorrect.setVisibility(View.INVISIBLE);
         Launcher.setLocked(false);
         finish();
         Log.i("Answer" , question.getANS());
+    }
+
+    private void check(int selected , RadioButton button) {
+        if (selected == button.getId())
+            unlock();
+        else
+            incorrect.setVisibility(View.VISIBLE);
     }
 
     @Override

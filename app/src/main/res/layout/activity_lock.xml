@@ -66,11 +66,13 @@
             android:layout_height="100dp"
             android:id="@+id/incorrect"
             android:visibility="invisible"
-            android:background="@android:color/holo_red_dark">
+            android:layout_gravity="center"
+            card_view:cardBackgroundColor="@android:color/holo_red_dark">
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_gravity="center"
+                android:gravity="center"
+                android:textColor="@android:color/white"
                 android:text="Incorrect Answer" />
         </android.support.v7.widget.CardView>
 
@@ -79,6 +81,19 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="UNLOCK" />
+
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="100dp"
+            android:layout_gravity="center"
+            card_view:cardBackgroundColor="@android:color/holo_red_dark">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="Incorrect Answer!"/>
+        </android.support.v7.widget.CardView>
 
     </LinearLayout>
 </layout>
