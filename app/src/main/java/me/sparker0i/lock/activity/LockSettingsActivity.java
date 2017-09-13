@@ -83,7 +83,7 @@ public class LockSettingsActivity extends AppCompatActivity{
         loadLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Utilities.loadQuestions(context);
+                new Utilities(context).loadQuestions();
             }
         });
         selectLayout.setOnClickListener(new View.OnClickListener() {

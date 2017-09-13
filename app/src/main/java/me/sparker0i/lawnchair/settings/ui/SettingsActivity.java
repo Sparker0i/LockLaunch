@@ -375,7 +375,7 @@ public class SettingsActivity extends AppCompatActivity implements PreferenceFra
                         break;
                     case FeatureFlags.KEY_LOAD_QUESTIONS:
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                            me.sparker0i.question.Utilities.loadQuestions(getContext());
+                            new me.sparker0i.question.Utilities(getContext()).loadQuestions();
                         else
                             startActivity(new Intent(getActivity() , LockSettingsActivity.class));
                         break;

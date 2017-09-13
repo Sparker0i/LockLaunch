@@ -19,12 +19,19 @@ import me.sparker0i.question.database.DatabaseHandler;
 import me.sparker0i.question.model.Category;
 import me.sparker0i.question.model.Question;
 import me.sparker0i.question.model.QuestionHelper;
+import me.sparker0i.question.model.UrlModel;
 
 public class Utilities {
-    private static final String JSON_URL = "http://blog.sparker0i.me/MathQuizQuestions/Math/Vedic.json";
+    private static final String JSON_URL = "http://blog.sparker0i.me/MathQuizQuestions/Urls.json";
+    private MaterialDialog dialog;
+    private Context context;
 
-    public static void loadQuestions(final Context context) {
-        final MaterialDialog dialog = new MaterialDialog.Builder(context)
+    public Utilities(Context context) {
+        this.context = context;
+    }
+
+    public void loadQuestions() {
+        dialog = new MaterialDialog.Builder(context)
                 .title("Loading")
                 .content("Please Wait")
                 .cancelable(false)
@@ -35,10 +42,9 @@ public class Utilities {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        dialog.hide();
                         Toast.makeText(context,"Pro",Toast.LENGTH_LONG).show();
                         Log.i("J" , response);
-                        showJSON(response , context);
+                        processUrl(response);
                     }
                 },
                 new Response.ErrorListener() {
@@ -53,8 +59,37 @@ public class Utilities {
         requestQueue.add(stringRequest);
     }
 
-    private static void showJSON(String json , Context context){
+    private void processUrl(String json){
         /*Do whatever you want with the String json*/
+        UrlModel urls = new Gson().fromJson(json , UrlModel.class);
+        Log.i("Json" , new Gson().toJson(urls));
+        for (int i = 0; i < urls.urls.size(); ++i) {
+            UrlModel.UrlList url = urls.urls.get(i);
+            String Url = url.getUrl();
+            StringRequest stringRequest = new StringRequest(Url ,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            Toast.makeText(context,"Pro",Toast.LENGTH_LONG).show();
+                            Log.i("J" , response);
+                            processQuestions(response);
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Toast.makeText(context,error.getMessage(),Toast.LENGTH_LONG).show();
+                        }
+                    }
+            );
+
+            RequestQueue requestQueue = Volley.newRequestQueue(context);
+            requestQueue.add(stringRequest);
+        }
+        dialog.hide();
+    }
+
+    private void processQuestions(String json) {
         QuestionHelper questionz = new Gson().fromJson(json , QuestionHelper.class);
         Log.i("Json" , new Gson().toJson(questionz));
         DatabaseHandler db = new DatabaseHandler(context);
@@ -69,12 +104,7 @@ public class Utilities {
     public static boolean isLockEnabled(Context context) {
         KeyguardManager manager = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-        {
-            if (manager.isDeviceSecure()) {
-                return true;
-            }
-            return false;
-        }
+            return manager.isDeviceSecure();
         else return LockType.isLockEnabled(context);
     }
 }

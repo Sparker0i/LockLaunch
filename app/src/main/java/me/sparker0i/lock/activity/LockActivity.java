@@ -72,21 +72,8 @@ public class LockActivity extends Activity implements OnClickListener{
         Launcher.setLocked(true);
     }
 
-    private void exitAppAnimate() {
-        ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-        List<ActivityManager.RunningTaskInfo> recentTasks = activityManager.getRunningTasks(Integer.MAX_VALUE);
-        for (int i=0; i<recentTasks.size(); i++) {
-            if (i == 1 && recentTasks.get(i).baseActivity.toShortString().contains(getPackageName())) {
-                // home button pressed
-                Log.i("Pressed" , "Home");
-                break;
-            }
-        }
-    }
-
     @Override
     public void onClick(View v) {
-
         SQLiteDatabase db = new DBHelper(this).getWritableDatabase();
 
         switch (v.getId()) {
@@ -98,7 +85,7 @@ public class LockActivity extends Activity implements OnClickListener{
         db.close();
     }
 
-    public void checkAnswer(int selected) {
+    private void checkAnswer(int selected) {
         switch(question.getANS()) {
             case "a" :
                 check(selected , optA);
@@ -142,7 +129,6 @@ public class LockActivity extends Activity implements OnClickListener{
     @Override
     protected void onUserLeaveHint() {
         super.onUserLeaveHint();
-        exitAppAnimate();
     }
 
     @Override
@@ -150,7 +136,7 @@ public class LockActivity extends Activity implements OnClickListener{
 
     }
 
-    static class BackgroundThread extends AsyncTask<Void , Void , Question> {
+    private static class BackgroundThread extends AsyncTask<Void , Void , Question> {
 
         @Override
         protected Question doInBackground(Void... params) {
