@@ -327,6 +327,7 @@ public class SettingsActivity extends AppCompatActivity implements PreferenceFra
                     prefLockEnabled.setChecked(false);
                 }
                 else {
+                    new Preferences(getContext()).setLockEnabled(true);
                     getContext().startService(new Intent(getContext() , ScreenService.class));
                 }
             }

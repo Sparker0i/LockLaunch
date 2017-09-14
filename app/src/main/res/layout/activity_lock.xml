@@ -9,9 +9,9 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin">
+
     <LinearLayout
         android:orientation="vertical">
-
         <android.support.v7.widget.CardView
             android:id="@+id/card_view"
             android:layout_width="match_parent"
@@ -60,22 +60,6 @@
             </RelativeLayout>
         </android.support.v7.widget.CardView>
 
-        <android.support.v7.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_marginTop="100dp"
-            android:layout_height="100dp"
-            android:id="@+id/incorrect"
-            android:visibility="invisible"
-            android:layout_gravity="center"
-            card_view:cardBackgroundColor="@android:color/holo_red_dark">
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:textColor="@android:color/white"
-                android:text="Incorrect Answer" />
-        </android.support.v7.widget.CardView>
-
         <Button
             android:id="@+id/btn_on"
             android:layout_width="match_parent"
@@ -84,8 +68,10 @@
 
         <android.support.v7.widget.CardView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="100dp"
+            android:id="@+id/incorrect"
             android:layout_marginTop="100dp"
+            android:visibility="invisible"
             android:layout_gravity="center"
             card_view:cardBackgroundColor="@android:color/holo_red_dark">
             <TextView
@@ -94,6 +80,5 @@
                 android:gravity="center"
                 android:text="Incorrect Answer!"/>
         </android.support.v7.widget.CardView>
-
     </LinearLayout>
 </layout>
