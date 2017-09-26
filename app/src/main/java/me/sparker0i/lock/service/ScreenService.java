@@ -24,6 +24,8 @@ public class ScreenService extends Service{
 		receiver = new ScreenReceiver();
 		IntentFilter filter = new IntentFilter(Intent.ACTION_SCREEN_OFF);
 		registerReceiver(receiver, filter);
+		filter = new IntentFilter(Intent.ACTION_USER_PRESENT);
+		registerReceiver(receiver , filter);
 	}
 	
 	@Override
@@ -34,6 +36,8 @@ public class ScreenService extends Service{
 			receiver = new ScreenReceiver();
 			IntentFilter filter = new IntentFilter(Intent.ACTION_SCREEN_OFF);
 			registerReceiver(receiver, filter);
+            filter = new IntentFilter(Intent.ACTION_USER_PRESENT);
+            registerReceiver(receiver , filter);
 		}
 		
 		//Notification notification = new Notification(R.drawable.ic_launcher, "서비스 실행됨", System.currentTimeMillis());

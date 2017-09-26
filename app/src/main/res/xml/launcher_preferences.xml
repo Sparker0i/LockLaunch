@@ -34,7 +34,7 @@
 
     <me.sparker0i.lawnchair.settings.ui.SubPreference
         android:title="@string/lock_title"
-        android:icon="@drawable/ic_lock_black_24dp"
+        android:icon="@drawable/ic_lock"
         app:content="@xml/launcher_lock_preferences" />
 
     <me.sparker0i.lawnchair.settings.ui.SubPreference

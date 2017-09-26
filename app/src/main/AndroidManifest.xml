@@ -66,6 +66,7 @@
         <service android:name="me.sparker0i.lock.service.ScreenService" />
 
         <receiver android:name="me.sparker0i.lock.receiver.ScreenReceiver" />
+        <receiver android:name="me.sparker0i.lock.receiver.PhoneUnlockedReceiver" />
 
         <activity
             android:name=".Launcher"
