@@ -1,8 +1,6 @@
 package me.sparker0i.question;
 
-import android.app.KeyguardManager;
 import android.content.Context;
-import android.os.Build;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -14,7 +12,6 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 
-import me.sparker0i.lock.preferences.LockType;
 import me.sparker0i.question.database.DatabaseHandler;
 import me.sparker0i.question.model.Category;
 import me.sparker0i.question.model.Question;

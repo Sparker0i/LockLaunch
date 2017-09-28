@@ -1001,14 +1001,19 @@ public class Launcher extends Activity
     @Override
     protected void onPause() {
         // Ensure that items added to Launcher are queued until Launcher returns
-        InstallShortcutReceiver.enableInstallQueue();
-
         super.onPause();
-        mPaused = true;
-        mDragController.cancelDrag();
-        mDragController.resetLastGestureUpTime();
+        InstallShortcutReceiver.enableInstallQueue();
+        if (Launcher.isLocked()) {
+            launchActivity();
+        }
+        else {
+            super.onPause();
+            mPaused = true;
+            mDragController.cancelDrag();
+            mDragController.resetLastGestureUpTime();
 
-        mLauncherTab.getClient().onPause();
+            mLauncherTab.getClient().onPause();
+        }
     }
 
     @Override

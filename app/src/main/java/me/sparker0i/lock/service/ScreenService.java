@@ -22,9 +22,7 @@ public class ScreenService extends Service{
 		super.onCreate();
 		
 		receiver = new ScreenReceiver();
-		IntentFilter filter = new IntentFilter(Intent.ACTION_SCREEN_OFF);
-		registerReceiver(receiver, filter);
-		filter = new IntentFilter(Intent.ACTION_USER_PRESENT);
+		IntentFilter filter = new IntentFilter(Intent.ACTION_USER_PRESENT);
 		registerReceiver(receiver , filter);
 	}
 	
@@ -32,12 +30,10 @@ public class ScreenService extends Service{
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		super.onStartCommand(intent, flags, startId);
 		
-		if(intent !=null & intent.getAction() == null & receiver == null) {
+		if(intent != null && intent.getAction() == null && receiver == null) {
 			receiver = new ScreenReceiver();
-			IntentFilter filter = new IntentFilter(Intent.ACTION_SCREEN_OFF);
+			IntentFilter filter = new IntentFilter(Intent.ACTION_USER_PRESENT);
 			registerReceiver(receiver, filter);
-            filter = new IntentFilter(Intent.ACTION_USER_PRESENT);
-            registerReceiver(receiver , filter);
 		}
 		
 		//Notification notification = new Notification(R.drawable.ic_launcher, "서비스 실행됨", System.currentTimeMillis());

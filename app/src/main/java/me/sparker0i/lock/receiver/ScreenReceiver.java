@@ -11,31 +11,25 @@ import me.sparker0i.lock.activity.LockActivity;
 
 public class ScreenReceiver extends BroadcastReceiver{
 	
-	private TelephonyManager tm = null;
+	TelephonyManager tm;
 	private boolean isPhoneIdle = true;
 
 	@Override
 	public void onReceive(Context context, Intent intent) {
 		
-		Toast.makeText(context, "BoradCastReceiver 호출!", Toast.LENGTH_SHORT).show();
+		Toast.makeText(context, "Broadcast Receiver!", Toast.LENGTH_SHORT).show();
 		
-		if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
+		if (intent != null && intent.getAction().equals(Intent.ACTION_USER_PRESENT)) {
 			
-			if(tm == null) {
-				tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+			tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+			if (tm != null)
 				tm.listen(phoneListener, PhoneStateListener.LISTEN_CALL_STATE);
-			}
 			
 			if(isPhoneIdle) {
 				Intent i = new Intent(context, LockActivity.class);
 				i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP); //처음 실행작업 / 앱을 실행한 채 전원을 누르면 쌓이는 것을 방지 
 				context.startActivity(i);
 			}
-		}
-		else if (intent.getAction().equals(Intent.ACTION_USER_PRESENT)) {
-			Intent i = new Intent(context, LockActivity.class);
-			i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP); //처음 실행작업 / 앱을 실행한 채 전원을 누르면 쌓이는 것을 방지
-			context.startActivity(i);
 		}
 	}
 	
