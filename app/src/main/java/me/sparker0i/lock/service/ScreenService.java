@@ -22,17 +22,17 @@ public class ScreenService extends Service{
 		super.onCreate();
 		
 		receiver = new ScreenReceiver();
-		IntentFilter filter = new IntentFilter(Intent.ACTION_SCREEN_OFF);
-		registerReceiver(receiver, filter);
+		IntentFilter filter = new IntentFilter(Intent.ACTION_USER_PRESENT);
+		registerReceiver(receiver , filter);
 	}
 	
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		super.onStartCommand(intent, flags, startId);
 		
-		if(intent !=null & intent.getAction() == null & receiver == null) {
+		if(intent != null && intent.getAction() == null && receiver == null) {
 			receiver = new ScreenReceiver();
-			IntentFilter filter = new IntentFilter(Intent.ACTION_SCREEN_OFF);
+			IntentFilter filter = new IntentFilter(Intent.ACTION_USER_PRESENT);
 			registerReceiver(receiver, filter);
 		}
 		

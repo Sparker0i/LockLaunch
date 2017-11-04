@@ -220,7 +220,7 @@ public class Launcher extends Activity
         return locked;
     }
 
-    public static void setLocked(boolean  value) {
+    public static void setLocked(boolean value) {
         locked = value;
     }
 
@@ -388,88 +388,93 @@ public class Launcher extends Activity
 
         setScreenOrientation();
 
-        if (!BuildConfig.MOBILE_CENTER_KEY.equalsIgnoreCase("null"))
-            MobileCenter.start(getApplication(), BuildConfig.MOBILE_CENTER_KEY, Analytics.class, Crashes.class, Distribute.class);
-
-        LauncherAppState app = LauncherAppState.getInstance();
-        app.setMLauncher(this);
-
-        // Load configuration-specific DeviceProfile
-        mDeviceProfile = getResources().getConfiguration().orientation
-                == Configuration.ORIENTATION_LANDSCAPE ?
-                app.getInvariantDeviceProfile().landscapeProfile
-                : app.getInvariantDeviceProfile().portraitProfile;
-
-        mSharedPrefs = PreferenceProvider.INSTANCE.getPreferences(this);
-        mIsSafeModeEnabled = getPackageManager().isSafeMode();
-        mModel = app.setLauncher(this);
-        mIconCache = app.getIconCache();
-        mAccessibilityDelegate = new LauncherAccessibilityDelegate(this);
-
-        mDragController = new DragController(this);
-        mBlurWallpaperProvider = new BlurWallpaperProvider(this);
-        mAllAppsController = new AllAppsTransitionController(this);
-        mStateTransitionAnimation = new LauncherStateTransitionAnimation(this, mAllAppsController);
-
-        mAppWidgetManager = AppWidgetManagerCompat.getInstance(this);
-
-        mAppWidgetHost = new LauncherAppWidgetHost(this, APPWIDGET_HOST_ID);
-        mAppWidgetHost.startListening();
-
-        // If we are getting an onCreate, we can actually preempt onResume and unset mPaused here,
-        // this also ensures that any synchronous binding below doesn't re-trigger another
-        // LauncherModel load.
-        mPaused = false;
-
-        setContentView(R.layout.launcher);
-
-        mPlanesEnabled = Utilities.getPrefs(this).getEnablePlanes();
-        setupViews();
-        mDeviceProfile.layout(this, false /* notifyListeners */);
-        mExtractedColors = new ExtractedColors();
-        loadExtractedColorsAndColorItems();
-        mPopupDataProvider = new PopupDataProvider(this);
-        ((AccessibilityManager) getSystemService(ACCESSIBILITY_SERVICE))
-                .addAccessibilityStateChangeListener(this);
-
-        mSavedState = savedInstanceState;
-        restoreState(mSavedState);
-
-        // We only load the page synchronously if the user rotates (or triggers a
-        // configuration change) while launcher is in the foreground
-        if (!mModel.startLoader(mWorkspace.getRestorePage())) {
-            // If we are not binding synchronously, show a fade in animation when
-            // the first page bind completes.
-            mDragLayer.setAlpha(0);
+        if (isLocked()) {
+            launchActivity();
         } else {
-            setWorkspaceLoading(true);
+
+            if (!BuildConfig.MOBILE_CENTER_KEY.equalsIgnoreCase("null"))
+                MobileCenter.start(getApplication(), BuildConfig.MOBILE_CENTER_KEY, Analytics.class, Crashes.class, Distribute.class);
+
+            LauncherAppState app = LauncherAppState.getInstance();
+            app.setMLauncher(this);
+
+            // Load configuration-specific DeviceProfile
+            mDeviceProfile = getResources().getConfiguration().orientation
+                    == Configuration.ORIENTATION_LANDSCAPE ?
+                    app.getInvariantDeviceProfile().landscapeProfile
+                    : app.getInvariantDeviceProfile().portraitProfile;
+
+            mSharedPrefs = PreferenceProvider.INSTANCE.getPreferences(this);
+            mIsSafeModeEnabled = getPackageManager().isSafeMode();
+            mModel = app.setLauncher(this);
+            mIconCache = app.getIconCache();
+            mAccessibilityDelegate = new LauncherAccessibilityDelegate(this);
+
+            mDragController = new DragController(this);
+            mBlurWallpaperProvider = new BlurWallpaperProvider(this);
+            mAllAppsController = new AllAppsTransitionController(this);
+            mStateTransitionAnimation = new LauncherStateTransitionAnimation(this, mAllAppsController);
+
+            mAppWidgetManager = AppWidgetManagerCompat.getInstance(this);
+
+            mAppWidgetHost = new LauncherAppWidgetHost(this, APPWIDGET_HOST_ID);
+            mAppWidgetHost.startListening();
+
+            // If we are getting an onCreate, we can actually preempt onResume and unset mPaused here,
+            // this also ensures that any synchronous binding below doesn't re-trigger another
+            // LauncherModel load.
+            mPaused = false;
+
+            setContentView(R.layout.launcher);
+
+            mPlanesEnabled = Utilities.getPrefs(this).getEnablePlanes();
+            setupViews();
+            mDeviceProfile.layout(this, false /* notifyListeners */);
+            mExtractedColors = new ExtractedColors();
+            loadExtractedColorsAndColorItems();
+            mPopupDataProvider = new PopupDataProvider(this);
+            ((AccessibilityManager) getSystemService(ACCESSIBILITY_SERVICE))
+                    .addAccessibilityStateChangeListener(this);
+
+            mSavedState = savedInstanceState;
+            restoreState(mSavedState);
+
+            // We only load the page synchronously if the user rotates (or triggers a
+            // configuration change) while launcher is in the foreground
+            if (!mModel.startLoader(mWorkspace.getRestorePage())) {
+                // If we are not binding synchronously, show a fade in animation when
+                // the first page bind completes.
+                mDragLayer.setAlpha(0);
+            } else {
+                setWorkspaceLoading(true);
+            }
+
+            // For handling default keys
+            mDefaultKeySsb = new SpannableStringBuilder();
+            Selection.setSelection(mDefaultKeySsb, 0);
+
+            IntentFilter filter = new IntentFilter(ACTION_APPWIDGET_HOST_RESET);
+            registerReceiver(mUiBroadcastReceiver, filter);
+
+            mLauncherTab = new LauncherTab(this);
+
+            if (mSharedPrefs.getRequiresIconCacheReload()) {
+                mSharedPrefs.setRequiresIconCacheReload(false);
+                reloadIcons();
+            }
+
+            Window window = getWindow();
+            WindowManager.LayoutParams attributes = window.getAttributes();
+            attributes.systemUiVisibility |= (View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS | WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.setStatusBarColor(0);
+            window.setNavigationBarColor(0);
+
+            Settings.init(this);
+
+            Utilities.showChangelog(this);
         }
-
-        // For handling default keys
-        mDefaultKeySsb = new SpannableStringBuilder();
-        Selection.setSelection(mDefaultKeySsb, 0);
-
-        IntentFilter filter = new IntentFilter(ACTION_APPWIDGET_HOST_RESET);
-        registerReceiver(mUiBroadcastReceiver, filter);
-
-        mLauncherTab = new LauncherTab(this);
-
-        if (mSharedPrefs.getRequiresIconCacheReload()) {
-            mSharedPrefs.setRequiresIconCacheReload(false);
-            reloadIcons();
-        }
-
-        Window window = getWindow();
-        WindowManager.LayoutParams attributes = window.getAttributes();
-        attributes.systemUiVisibility |= (View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS | WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.setStatusBarColor(0);
-        window.setNavigationBarColor(0);
-
-        Settings.init(this);
-
-        Utilities.showChangelog(this);
     }
 
     private void setScreenOrientation() {
@@ -897,90 +902,94 @@ public class Launcher extends Activity
     @Override
     protected void onResume() {
         super.onResume();
+        if (locked) {
+            launchActivity();
+        } else {
 
-        setScreenOrientation();
-        // Restore the previous launcher state
-        if (mOnResumeState == State.WORKSPACE) {
-            showWorkspace(false);
-        } else if (mOnResumeState == State.APPS) {
-            showAppsView(false /* animated */, mAppsView.shouldRestoreImeState() /* focusSearchBar */);
-        } else if (mOnResumeState == State.WIDGETS) {
-            showWidgetsView(false, false);
-        }
-        mOnResumeState = State.NONE;
-
-        mPaused = false;
-        if (mOnResumeNeedsLoad) {
-            setWorkspaceLoading(true);
-            mModel.startLoader(getCurrentWorkspaceScreen());
-            mOnResumeNeedsLoad = false;
-        }
-        if (mBindOnResumeCallbacks.size() > 0) {
-            // We might have postponed some bind calls until onResume (see waitUntilResume) --
-            // execute them here
-
-            for (int i = 0; i < mBindOnResumeCallbacks.size(); i++) {
-                mBindOnResumeCallbacks.get(i).run();
+            setScreenOrientation();
+            // Restore the previous launcher state
+            if (mOnResumeState == State.WORKSPACE) {
+                showWorkspace(false);
+            } else if (mOnResumeState == State.APPS) {
+                showAppsView(false /* animated */, mAppsView.shouldRestoreImeState() /* focusSearchBar */);
+            } else if (mOnResumeState == State.WIDGETS) {
+                showWidgetsView(false, false);
             }
-            mBindOnResumeCallbacks.clear();
-        }
-        if (mOnResumeCallbacks.size() > 0) {
-            for (int i = 0; i < mOnResumeCallbacks.size(); i++) {
-                mOnResumeCallbacks.get(i).run();
+            mOnResumeState = State.NONE;
+
+            mPaused = false;
+            if (mOnResumeNeedsLoad) {
+                setWorkspaceLoading(true);
+                mModel.startLoader(getCurrentWorkspaceScreen());
+                mOnResumeNeedsLoad = false;
             }
-            mOnResumeCallbacks.clear();
+            if (mBindOnResumeCallbacks.size() > 0) {
+                // We might have postponed some bind calls until onResume (see waitUntilResume) --
+                // execute them here
+
+                for (int i = 0; i < mBindOnResumeCallbacks.size(); i++) {
+                    mBindOnResumeCallbacks.get(i).run();
+                }
+                mBindOnResumeCallbacks.clear();
+            }
+            if (mOnResumeCallbacks.size() > 0) {
+                for (int i = 0; i < mOnResumeCallbacks.size(); i++) {
+                    mOnResumeCallbacks.get(i).run();
+                }
+                mOnResumeCallbacks.clear();
+            }
+
+            // Reset the pressed state of icons that were locked in the press state while activities
+            // were launching
+            if (mWaitingForResume != null) {
+                // Resets the previous workspace icon press state
+                mWaitingForResume.setStayPressed(false);
+            }
+
+            mWorkspace.onResume();
+
+            if (!isWorkspaceLoading()) {
+                // Process any items that were added while Launcher was away.
+                InstallShortcutReceiver.disableAndFlushInstallQueue(this);
+
+                // Refresh shortcuts if the permission changed.
+                mModel.refreshShortcutsIfRequired();
+            }
+
+            if (shouldShowDiscoveryBounce()) {
+                mAllAppsController.showDiscoveryBounce();
+            }
+            mIsResumeFromActionScreenOff = false;
+
+            mLauncherTab.getClient().onResume();
+
+            if (mCurrentDialog != null) {
+                mCurrentDialog.onResume();
+            }
+
+            if (reloadIcons) {
+                reloadIcons = false;
+                reloadIcons();
+            }
+
+            if (kill) {
+                kill = false;
+                Log.v("Settings", "Die Motherf*cker!");
+                Process.killProcess(Process.myPid());
+            }
+
+            if (recreate) {
+                recreate = false;
+                recreate();
+            }
+
+            if (updateWallpaper) {
+                updateWallpaper = false;
+                mBlurWallpaperProvider.updateAsync();
+            }
+
+            mDisableEditing = Utilities.getPrefs(this).getLockDesktop();
         }
-
-        // Reset the pressed state of icons that were locked in the press state while activities
-        // were launching
-        if (mWaitingForResume != null) {
-            // Resets the previous workspace icon press state
-            mWaitingForResume.setStayPressed(false);
-        }
-
-        mWorkspace.onResume();
-
-        if (!isWorkspaceLoading()) {
-            // Process any items that were added while Launcher was away.
-            InstallShortcutReceiver.disableAndFlushInstallQueue(this);
-
-            // Refresh shortcuts if the permission changed.
-            mModel.refreshShortcutsIfRequired();
-        }
-
-        if (shouldShowDiscoveryBounce()) {
-            mAllAppsController.showDiscoveryBounce();
-        }
-        mIsResumeFromActionScreenOff = false;
-
-        mLauncherTab.getClient().onResume();
-
-        if (mCurrentDialog != null) {
-            mCurrentDialog.onResume();
-        }
-
-        if (reloadIcons) {
-            reloadIcons = false;
-            reloadIcons();
-        }
-
-        if (kill) {
-            kill = false;
-            Log.v("Settings", "Die Motherf*cker!");
-            Process.killProcess(Process.myPid());
-        }
-
-        if (recreate) {
-            recreate = false;
-            recreate();
-        }
-
-        if (updateWallpaper) {
-            updateWallpaper = false;
-            mBlurWallpaperProvider.updateAsync();
-        }
-
-        mDisableEditing = Utilities.getPrefs(this).getLockDesktop();
     }
 
     private void reloadIcons() {
@@ -992,14 +1001,19 @@ public class Launcher extends Activity
     @Override
     protected void onPause() {
         // Ensure that items added to Launcher are queued until Launcher returns
-        InstallShortcutReceiver.enableInstallQueue();
-
         super.onPause();
-        mPaused = true;
-        mDragController.cancelDrag();
-        mDragController.resetLastGestureUpTime();
+        InstallShortcutReceiver.enableInstallQueue();
+        if (Launcher.isLocked()) {
+            launchActivity();
+        }
+        else {
+            super.onPause();
+            mPaused = true;
+            mDragController.cancelDrag();
+            mDragController.resetLastGestureUpTime();
 
-        mLauncherTab.getClient().onPause();
+            mLauncherTab.getClient().onPause();
+        }
     }
 
     @Override

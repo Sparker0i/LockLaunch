@@ -18,12 +18,9 @@
 package me.sparker0i.lawnchair.settings.ui;
 
 import android.Manifest;
-import android.app.Activity;
-import android.app.ActivityManager;
 import android.app.Dialog;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
-import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -36,14 +33,10 @@ import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceScreen;
 import android.preference.SwitchPreference;
-import android.provider.Settings;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -52,9 +45,6 @@ import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
-
-import com.afollestad.materialdialogs.DialogAction;
-import com.afollestad.materialdialogs.MaterialDialog;
 
 import java.util.Random;
 
@@ -70,7 +60,6 @@ import me.sparker0i.lawnchair.graphics.IconShapeOverride;
 import me.sparker0i.lawnchair.preferences.IPreferenceProvider;
 import me.sparker0i.lawnchair.preferences.PreferenceFlags;
 import me.sparker0i.lock.activity.LockSettingsActivity;
-import me.sparker0i.lock.preferences.Preferences;
 import me.sparker0i.lock.service.ScreenService;
 import me.sparker0i.question.activity.CategoryChooser;
 
@@ -79,7 +68,7 @@ import me.sparker0i.question.activity.CategoryChooser;
  */
 public class SettingsActivity extends AppCompatActivity implements PreferenceFragment.OnPreferenceStartFragmentCallback, SharedPreferences.OnSharedPreferenceChangeListener {
 
-    private static IPreferenceProvider sharedPrefs;
+    static IPreferenceProvider sharedPrefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -183,10 +172,7 @@ public class SettingsActivity extends AppCompatActivity implements PreferenceFra
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             getPreferenceManager().setSharedPreferencesName(LauncherFiles.SHARED_PREFERENCES_KEY);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                addPreferencesFromResource(R.xml.launcher_preferences);
-            else
-                addPreferencesFromResource(R.xml.launcher_preferences_upto_22);
+            addPreferencesFromResource(R.xml.launcher_preferences);
         }
 
         @Override
@@ -254,16 +240,6 @@ public class SettingsActivity extends AppCompatActivity implements PreferenceFra
             prefWeatherApiKey.setEnabled(!awarenessApiEnabled);
         }
 
-        private boolean isMyServiceRunning(Context context , Class<?> serviceClass) {
-            ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-            for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-                if (serviceClass.getName().equals(service.service.getClassName())) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
         @Override
         public boolean onPreferenceChange(Preference preference, Object newValue) {
             if (preference.getKey() != null) {
@@ -278,59 +254,16 @@ public class SettingsActivity extends AppCompatActivity implements PreferenceFra
                         }
                         break;
                     case FeatureFlags.KEY_ENABLE_LOCK:
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                            if (!((SwitchPreference) preference).isChecked()) {
-                                if (me.sparker0i.question.Utilities.isLockEnabled(getContext())) {
-                                    ((SwitchPreference) preference).setChecked(false);
-                                    showLockEnabled();
-                                }
-                                else {
-                                    SwitchPreference prefLockEnabled = (SwitchPreference) findPreference(FeatureFlags.KEY_ENABLE_LOCK);
-                                    if (!prefLockEnabled.isChecked())
-                                        getContext().startService(new Intent(getContext(), ScreenService.class));
-                                    else
-                                        getContext().stopService(new Intent(getContext(), ScreenService.class));
-                                }
-                            } else {
-                                getContext().stopService(new Intent(getContext(), ScreenService.class));
-                            }
-                        }
+                        SwitchPreference prefLockEnabled = (SwitchPreference) findPreference(FeatureFlags.KEY_ENABLE_LOCK);
+                        if (!prefLockEnabled.isChecked())
+                            getActivity().startService(new Intent(getActivity(), ScreenService.class));
+                        else
+                            getActivity().stopService(new Intent(getActivity(), ScreenService.class));
                         break;
                 }
                 return true;
             }
             return false;
-        }
-
-        public void showLockEnabled() {
-            final MaterialDialog dialog = new MaterialDialog.Builder(getContext())
-                    .title("Lock Screen Enabled")
-                    .content("Please Disable Your Android Lock Screen before you continue")
-                    .positiveText("OK")
-                    .onPositive(new MaterialDialog.SingleButtonCallback() {
-                        @Override
-                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                            startActivityForResult(new Intent(Settings.ACTION_SECURITY_SETTINGS) , 101);
-                        }
-                    })
-                    .build();
-            dialog.show();
-        }
-
-        @Override
-        public void onActivityResult(int requestCode, int resultCode, Intent data) {
-            Log.i("Yeah" , "Called");
-            if (requestCode == 101) {
-                if (me.sparker0i.question.Utilities.isLockEnabled(getContext())) {
-                    getPreferenceManager().setSharedPreferencesName(LauncherFiles.SHARED_PREFERENCES_KEY);
-                    SwitchPreference prefLockEnabled = (SwitchPreference) findPreference(FeatureFlags.KEY_ENABLE_LOCK);
-                    prefLockEnabled.setChecked(false);
-                }
-                else {
-                    new Preferences(getContext()).setLockEnabled(true);
-                    getContext().startService(new Intent(getContext() , ScreenService.class));
-                }
-            }
         }
 
         @Override
