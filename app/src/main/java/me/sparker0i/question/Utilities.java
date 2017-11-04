@@ -38,55 +38,27 @@ public class Utilities {
                 .progress(true , 0)
                 .build();
         dialog.show();
-        StringRequest stringRequest = new StringRequest(JSON_URL ,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        Toast.makeText(context,"Pro",Toast.LENGTH_LONG).show();
-                        Log.i("J" , response);
-                        processUrl(response);
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(context,error.getMessage(),Toast.LENGTH_LONG).show();
-                    }
-                }
-        );
-
-        RequestQueue requestQueue = Volley.newRequestQueue(context);
-        requestQueue.add(stringRequest);
-    }
-
-    private void processUrl(String json){
-        /*Do whatever you want with the String json*/
-        UrlModel urls = new Gson().fromJson(json , UrlModel.class);
-        Log.i("Json" , new Gson().toJson(urls));
-        for (int i = 0; i < urls.urls.size(); ++i) {
-            UrlModel.UrlList url = urls.urls.get(i);
-            String Url = url.getUrl();
-            StringRequest stringRequest = new StringRequest(Url ,
-                    new Response.Listener<String>() {
-                        @Override
-                        public void onResponse(String response) {
-                            Toast.makeText(context,"Pro",Toast.LENGTH_LONG).show();
-                            Log.i("J" , response);
-                            processQuestions(response);
-                        }
-                    },
-                    new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            Toast.makeText(context,error.getMessage(),Toast.LENGTH_LONG).show();
-                        }
-                    }
-            );
-
-            RequestQueue requestQueue = Volley.newRequestQueue(context);
-            requestQueue.add(stringRequest);
-        }
-        dialog.hide();
+        processQuestions("{\n" +
+                "  \"cat\": \"Vedic\",\n" +
+                "  \"list\": [\n" +
+                "    {\n" +
+                "      \"qn\": \"What is sin(π) ?\",\n" +
+                "      \"a\": \"1\",\n" +
+                "      \"b\": \"0\",\n" +
+                "      \"c\": \"1.414\",\n" +
+                "      \"d\": \"0.678\",\n" +
+                "      \"ans\": \"b\"\n" +
+                "    },\n" +
+                "    {\n" +
+                "      \"qn\": \"What is sin(π/6) ?\",\n" +
+                "      \"a\": \"1\",\n" +
+                "      \"b\": \"0\",\n" +
+                "      \"c\": \"0.5\",\n" +
+                "      \"d\": \"0.678\",\n" +
+                "      \"ans\": \"c\"\n" +
+                "    }\n" +
+                "  ]\n" +
+                "}");
     }
 
     private void processQuestions(String json) {
@@ -99,6 +71,7 @@ public class Utilities {
             db.addQuestion(question);
             db.addCategory(new Category(questionz.getCAT() , false));
         }
+        dialog.hide();
     }
 
     public static boolean isLockEnabled(Context context) {
