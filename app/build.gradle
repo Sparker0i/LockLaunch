@@ -22,8 +22,8 @@ if (localPropsFile.exists()) {
 }
 
 android {
-    compileSdkVersion 26
-    buildToolsVersion "26.0.1"
+    compileSdkVersion 27
+    buildToolsVersion "27.0.0"
 
     dataBinding {
         enabled true
@@ -39,7 +39,7 @@ android {
     }
     defaultConfig {
         minSdkVersion 21
-        targetSdkVersion 26
+        targetSdkVersion 27
         applicationId "me.sparker0i.lawnchair"
 
         buildConfigField "boolean", "TRAVIS", System.getenv("TRAVIS") ?: "false"
@@ -83,7 +83,7 @@ android {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     def mobileCenterSdkVersion = '0.10.0'
-    def supportLibVersion = '26.1.0'
+    def supportLibVersion = '27.0.0'
     implementation "com.microsoft.azure.mobile:mobile-center-analytics:${mobileCenterSdkVersion}"
     implementation "com.microsoft.azure.mobile:mobile-center-crashes:${mobileCenterSdkVersion}"
     implementation "com.microsoft.azure.mobile:mobile-center-distribute:${mobileCenterSdkVersion}"
