@@ -111,7 +111,6 @@ public class LockActivity extends AppCompatActivity {
                 } , getFilesDir().getPath() , "face");
             }
         });
-
     }
 
     @Override
