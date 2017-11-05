@@ -1,39 +1,33 @@
 package me.sparker0i.lock.activity;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.database.sqlite.SQLiteDatabase;
-import android.databinding.DataBindingUtil;
-import android.os.AsyncTask;
-import android.os.Build;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.WindowManager;
-import android.widget.RadioButton;
-import android.widget.TextView;
 
 import com.github.florent37.camerafragment.CameraFragment;
 import com.github.florent37.camerafragment.configuration.Configuration;
 import com.github.florent37.camerafragment.listeners.CameraFragmentResultListener;
+import com.kairos.Kairos;
+import com.kairos.KairosListener;
 
-import java.util.List;
+import org.json.JSONException;
+
+import java.io.UnsupportedEncodingException;
 
 import me.sparker0i.lawnchair.Launcher;
 import me.sparker0i.lawnchair.R;
-import me.sparker0i.lock.DBHelper;
-import me.sparker0i.question.database.DatabaseHandler;
-import me.sparker0i.question.model.Question;
 
 @SuppressWarnings("deprecation")
 public class LockActivity extends AppCompatActivity {
@@ -107,6 +101,52 @@ public class LockActivity extends AppCompatActivity {
                     @Override
                     public void onPhotoTaken(byte[] bytes, String filePath) {
                         Log.i("location", filePath);
+                        Kairos kairos = new Kairos();
+                        kairos.setAuthentication(context , "519b32f0" , "00ed607825eeb76283294e0c2ae1b3da");
+                        KairosListener listener = new KairosListener() {
+                            @Override
+                            public void onSuccess(String s) {
+                                Log.i("Kairos Response" , s);
+                            }
+
+                            @Override
+                            public void onFail(String s) {
+                                Log.i("Kairos Fail" , s);
+                            }
+                        };
+                        /*
+                        Bitmap image = BitmapFactory.decodeFile(filepath);
+                        String subjectId = "Sparker0i";
+                        String galleryId = "friends";
+                        String selector = "FULL";
+                        String multipleFaces = "false";
+                        String minHeadScale = "0.25";
+                        myKairos.enroll(image,
+                                        subjectId,
+                                        galleryId,
+                                        selector,
+                                        multipleFaces,
+                                        minHeadScale,
+                                        listener);
+                        */
+                        Bitmap image = BitmapFactory.decodeFile(filePath);
+                        String galleryId = "friends";
+                        String selector = "FULL";
+                        String threshold = "0.75";
+                        String minHeadScale = "0.25";
+                        String maxNumResults = "25";
+                        try {
+                            kairos.recognize(image,
+                                    galleryId,
+                                    selector,
+                                    threshold,
+                                    minHeadScale,
+                                    maxNumResults,
+                                    listener);
+                        }
+                        catch (JSONException | UnsupportedEncodingException ex ) {
+                            ex.printStackTrace();
+                        }
                     }
                 } , getFilesDir().getPath() , "face");
             }

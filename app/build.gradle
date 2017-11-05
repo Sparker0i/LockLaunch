@@ -104,6 +104,7 @@ dependencies {
     implementation project(':launcherclient')
     implementation 'com.android.support:support-v4:27.0.0'
     implementation 'com.github.florent37:camerafragment:1.0.7'
+    implementation files('KairosSDK.jar')
 }
 repositories {
     mavenCentral()
