@@ -28,7 +28,6 @@ import java.util.List;
 
 import me.sparker0i.lawnchair.Launcher;
 import me.sparker0i.lawnchair.R;
-import me.sparker0i.lawnchair.databinding.ActivityLockBinding;
 import me.sparker0i.lock.DBHelper;
 import me.sparker0i.question.database.DatabaseHandler;
 import me.sparker0i.question.model.Question;
@@ -36,7 +35,6 @@ import me.sparker0i.question.model.Question;
 @SuppressWarnings("deprecation")
 public class LockActivity extends AppCompatActivity {
 
-    ActivityLockBinding binding;
     Context context;
     Handler handler;
     Permissions per;
@@ -46,11 +44,11 @@ public class LockActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         context = this;
         handler = new Handler();
-        binding = DataBindingUtil.setContentView(this , R.layout.activity_lock);
+        setContentView(R.layout.activity_lock);
         Launcher.setLocked(true);
         per = new Permissions(this);
-        if (Build.VERSION.SDK_INT >= 23)
-            requestPermissions(new String[]{Manifest.permission.CAMERA},20);
+        /*if (Build.VERSION.SDK_INT >= 23)
+            requestPermissions(new String[]{Manifest.permission.CAMERA},20);*/
 
     }
 
