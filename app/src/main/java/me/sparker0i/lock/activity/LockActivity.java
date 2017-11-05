@@ -25,6 +25,7 @@ import android.widget.TextView;
 
 import com.github.florent37.camerafragment.CameraFragment;
 import com.github.florent37.camerafragment.configuration.Configuration;
+import com.github.florent37.camerafragment.listeners.CameraFragmentResultListener;
 
 import java.util.List;
 
@@ -40,6 +41,7 @@ public class LockActivity extends AppCompatActivity {
     Context context;
     Handler handler;
     Permissions per;
+    CameraFragment cameraFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +55,12 @@ public class LockActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Launcher.setLocked(false);
                 finish();
+            }
+        });
+        findViewById(R.id.aSwitch).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                cameraFragment.switchCameraTypeFrontBack();
             }
         });
         per = new Permissions(this);
@@ -80,12 +88,29 @@ public class LockActivity extends AppCompatActivity {
             }
         }
         else {
-            CameraFragment cameraFragment = CameraFragment.newInstance(new Configuration.Builder().build());
+            cameraFragment = CameraFragment.newInstance(new Configuration.Builder().build());
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.fragment, cameraFragment, "hh")
                     .commit();
+
         }
             //requestPermissions(new String[]{Manifest.permission.CAMERA},20);
+        findViewById(R.id.capture).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                cameraFragment.takePhotoOrCaptureVideo(new CameraFragmentResultListener() {
+                    @Override
+                    public void onVideoRecorded(String filePath) {
+
+                    }
+
+                    @Override
+                    public void onPhotoTaken(byte[] bytes, String filePath) {
+                        Log.i("location", filePath);
+                    }
+                } , getFilesDir().getPath() , "face");
+            }
+        });
 
     }
 
