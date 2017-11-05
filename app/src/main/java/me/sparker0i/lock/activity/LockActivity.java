@@ -12,6 +12,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.util.Log;
@@ -48,15 +50,49 @@ public class LockActivity extends AppCompatActivity {
         handler = new Handler();
         binding = DataBindingUtil.setContentView(this , R.layout.activity_lock);
         Launcher.setLocked(true);
+        findViewById(R.id.unlock).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Launcher.setLocked(false);
+                finish();
+            }
+        });
         per = new Permissions(this);
-        if (Build.VERSION.SDK_INT >= 23)
-            requestPermissions(new String[]{Manifest.permission.CAMERA},20);
+        if (ContextCompat.checkSelfPermission(this , Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.CAMERA)) {
+                Log.i("In" , "Show Rationale");
+
+                // Show an explanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+
+            } else {
+
+                // No explanation needed, we can request the permission.
+                Log.i("In" , "Request Permissions");
+
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.CAMERA},
+                        20);
+
+                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                // app-defined int constant. The callback method gets the
+                // result of the request.
+            }
+        }
+        else {
+            CameraFragment cameraFragment = CameraFragment.newInstance(new Configuration.Builder().build());
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragment, cameraFragment, "hh")
+                    .commit();
+        }
+            //requestPermissions(new String[]{Manifest.permission.CAMERA},20);
 
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode){
             case 20:
                 if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
