@@ -63,6 +63,7 @@ object FeatureFlags {
     const val KEY_ENABLE_LOCK = "pref_enable_lock"
     const val KEY_LOAD_QUESTIONS = "pref_load_questions"
     const val KEY_SELECT_CATEGORIES = "pref_select_categories"
+    const val KEY_ADD_FACE ="pref_add_face"
     private var darkThemeFlag: Int = 0
 
     const val DARK_QSB = 1
