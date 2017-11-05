@@ -25,12 +25,12 @@ import android.widget.TextView;
 
 import com.github.florent37.camerafragment.CameraFragment;
 import com.github.florent37.camerafragment.configuration.Configuration;
+import com.github.florent37.camerafragment.listeners.CameraFragmentResultListener;
 
 import java.util.List;
 
 import me.sparker0i.lawnchair.Launcher;
 import me.sparker0i.lawnchair.R;
-import me.sparker0i.lawnchair.databinding.ActivityLockBinding;
 import me.sparker0i.lock.DBHelper;
 import me.sparker0i.question.database.DatabaseHandler;
 import me.sparker0i.question.model.Question;
@@ -38,23 +38,29 @@ import me.sparker0i.question.model.Question;
 @SuppressWarnings("deprecation")
 public class LockActivity extends AppCompatActivity {
 
-    ActivityLockBinding binding;
     Context context;
     Handler handler;
     Permissions per;
+    CameraFragment cameraFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context = this;
         handler = new Handler();
-        binding = DataBindingUtil.setContentView(this , R.layout.activity_lock);
+        setContentView(R.layout.activity_lock);
         Launcher.setLocked(true);
         findViewById(R.id.unlock).setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
                 Launcher.setLocked(false);
                 finish();
+            }
+        });
+        findViewById(R.id.aSwitch).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                cameraFragment.switchCameraTypeFrontBack();
             }
         });
         per = new Permissions(this);
@@ -82,13 +88,29 @@ public class LockActivity extends AppCompatActivity {
             }
         }
         else {
-            CameraFragment cameraFragment = CameraFragment.newInstance(new Configuration.Builder().build());
+            cameraFragment = CameraFragment.newInstance(new Configuration.Builder().build());
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.fragment, cameraFragment, "hh")
                     .commit();
+
         }
             //requestPermissions(new String[]{Manifest.permission.CAMERA},20);
+        findViewById(R.id.capture).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                cameraFragment.takePhotoOrCaptureVideo(new CameraFragmentResultListener() {
+                    @Override
+                    public void onVideoRecorded(String filePath) {
 
+                    }
+
+                    @Override
+                    public void onPhotoTaken(byte[] bytes, String filePath) {
+                        Log.i("location", filePath);
+                    }
+                } , getFilesDir().getPath() , "face");
+            }
+        });
     }
 
     @Override
