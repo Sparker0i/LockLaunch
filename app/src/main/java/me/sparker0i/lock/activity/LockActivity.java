@@ -51,13 +51,6 @@ public class LockActivity extends AppCompatActivity {
         handler = new Handler();
         setContentView(R.layout.activity_lock);
         Launcher.setLocked(true);
-        findViewById(R.id.unlock).setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Launcher.setLocked(false);
-                finish();
-            }
-        });
         findViewById(R.id.aSwitch).setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {

@@ -1,31 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-
+<layout>
     <LinearLayout
-        android:layout_marginTop="16dp"
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context="me.sparker0i.lock.activity.AddFace"
-        android:orientation="vertical">
-
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:layout_marginTop="?attr/actionBarSize"
+        android:orientation="vertical"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        tools:context="me.sparker0i.lock.activity.LockActivity">
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/name"
-            android:hint="Name" />
-        <Button
-            android:layout_width="match_parent"
-            android:id="@+id/captureandsave"
-            android:layout_height="wrap_content"
-            android:text="Capture and Save"/>
+            android:id="@+id/name"/>
 
-        <Button
+        <LinearLayout
             android:layout_width="match_parent"
-            android:id="@+id/aSwitch"
-            android:layout_height="wrap_content"
-            android:text="Switch"/>
+            android:layout_height="wrap_content">
+            <Button
+                android:layout_width="wrap_content"
+                android:id="@+id/captureandsave"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="Capture and Save"/>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:id="@+id/aSwitch"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="Switch"/>
+        </LinearLayout>
 
         <FrameLayout
             android:layout_width="match_parent"
@@ -33,5 +40,4 @@
             android:id="@+id/fragment">
         </FrameLayout>
     </LinearLayout>
-
-
+</layout>
