@@ -1,20 +1,17 @@
 package me.sparker0i.lock.activity;
 
 import android.Manifest;
-import android.app.ActivityManager;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.Bundle;
-import android.os.Handler;
-import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.View.OnClickListener;
+import android.widget.EditText;
 
 import com.github.florent37.camerafragment.CameraFragment;
 import com.github.florent37.camerafragment.configuration.Configuration;
@@ -26,37 +23,20 @@ import org.json.JSONException;
 
 import java.io.UnsupportedEncodingException;
 
-import me.sparker0i.lawnchair.Launcher;
 import me.sparker0i.lawnchair.R;
 
-@SuppressWarnings("deprecation")
-public class LockActivity extends AppCompatActivity {
-
-    Context context;
-    Handler handler;
-    Permissions per;
+public class AddFace extends AppCompatActivity {
     CameraFragment cameraFragment;
+    Permissions per;
+    Context context;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        context = this;
-        handler = new Handler();
-        setContentView(R.layout.activity_lock);
-        Launcher.setLocked(true);
-        findViewById(R.id.unlock).setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Launcher.setLocked(false);
-                finish();
-            }
-        });
-        findViewById(R.id.aSwitch).setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                cameraFragment.switchCameraTypeFrontBack();
-            }
-        });
+        setContentView(R.layout.activity_add_face);
+
+
         per = new Permissions(this);
         if (ContextCompat.checkSelfPermission(this , Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(this,
@@ -88,8 +68,13 @@ public class LockActivity extends AppCompatActivity {
                     .commit();
 
         }
-            //requestPermissions(new String[]{Manifest.permission.CAMERA},20);
-        findViewById(R.id.capture).setOnClickListener(new OnClickListener() {
+        findViewById(R.id.aSwitch).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                cameraFragment.switchCameraTypeFrontBack();
+            }
+        });
+        findViewById(R.id.captureandsave).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 cameraFragment.takePhotoOrCaptureVideo(new CameraFragmentResultListener() {
@@ -100,9 +85,8 @@ public class LockActivity extends AppCompatActivity {
 
                     @Override
                     public void onPhotoTaken(byte[] bytes, String filePath) {
-                        Log.i("location", filePath);
-                        Kairos kairos = new Kairos();
-                        kairos.setAuthentication(context , "91e3fef9" , "25d5338d52c40ecc14324d2b7aa3fdf6");
+                        Kairos mykairos = new Kairos();
+                        mykairos.setAuthentication(context , "91e3fef9" , "25d5338d52c40ecc14324d2b7aa3fdf6");
                         KairosListener listener = new KairosListener() {
                             @Override
                             public void onSuccess(String s) {
@@ -114,83 +98,29 @@ public class LockActivity extends AppCompatActivity {
                                 Log.i("Kairos Fail" , s);
                             }
                         };
-                        /*
-                        Bitmap image = BitmapFactory.decodeFile(filepath);
-                        String subjectId = "Lal";
-                        String galleryId = "images
-                        String multipleFaces = "false";
-                        String minHeadScale = "0.25";
-                        myKairos.enroll(image,
-                                        subjectId,
-                                        galleryId,
-                                        selector,
-                                        multipleFaces,
-                                        minHeadScale,
-                                        listener);
-                        */
+                        EditText ed = (EditText) findViewById(R.id.name);
                         Bitmap image = BitmapFactory.decodeFile(filePath);
+                        String subjectId = ed.getText().toString() ;
                         String galleryId = "images";
                         String selector = "FULL";
-                        String threshold = "0.75";
+                        String multipleFaces = "false";
                         String minHeadScale = "0.25";
-                        String maxNumResults = "25";
                         try {
-                            kairos.recognize(image,
+                            mykairos.enroll(image,
+                                    subjectId,
                                     galleryId,
                                     selector,
-                                    threshold,
+                                    multipleFaces,
                                     minHeadScale,
-                                    maxNumResults,
                                     listener);
                         }
-                        catch (JSONException | UnsupportedEncodingException ex ) {
+                        catch (JSONException | UnsupportedEncodingException ex){
                             ex.printStackTrace();
                         }
                     }
-                } , getFilesDir().getPath() , "face");
+
+                }, getFilesDir().getPath() , "face");
             }
         });
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode){
-            case 20:
-                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                    CameraFragment cameraFragment = CameraFragment.newInstance(new Configuration.Builder().build());
-                    getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.fragment, cameraFragment, "hh")
-                            .commit();
-                }
-                else{
-                    per.permissionDenied();
-                }
-
-        }
-    }
-
-    private void unlock() {
-        Launcher.setLocked(false);
-        finish();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        ActivityManager activityManager = (ActivityManager) getApplicationContext()
-                .getSystemService(Context.ACTIVITY_SERVICE);
-
-        if (activityManager != null)
-            activityManager.moveTaskToFront(getTaskId(), 0);
-    }
-
-    @Override
-    protected void onUserLeaveHint() {
-        super.onUserLeaveHint();
-    }
-
-    @Override
-    public void onBackPressed() {
-
     }
 }

@@ -59,6 +59,7 @@ import me.sparker0i.lawnchair.config.FeatureFlags;
 import me.sparker0i.lawnchair.graphics.IconShapeOverride;
 import me.sparker0i.lawnchair.preferences.IPreferenceProvider;
 import me.sparker0i.lawnchair.preferences.PreferenceFlags;
+import me.sparker0i.lock.activity.AddFace;
 import me.sparker0i.lock.activity.LockSettingsActivity;
 import me.sparker0i.lock.service.ScreenService;
 import me.sparker0i.question.activity.CategoryChooser;
@@ -315,6 +316,9 @@ public class SettingsActivity extends AppCompatActivity implements PreferenceFra
                         break;
                     case FeatureFlags.KEY_SELECT_CATEGORIES:
                         startActivity(new Intent(getActivity() , CategoryChooser.class));
+                        break;
+                    case FeatureFlags.KEY_ADD_FACE:
+                        startActivity(new Intent(getActivity() , AddFace.class));
                     default:
                         return false;
                 }

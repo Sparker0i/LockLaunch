@@ -7,6 +7,11 @@
         <SwitchPreference
             android:key="pref_enable_lock"
             android:title="@string/pref_cat_enable_lock" />
+        <Preference
+            android:key="pref_add_face"
+            android:title="Add Face"
+            android:summary="Click to add your face"
+            android:dependency="pref_enable_lock" />
 
         <Preference
             android:key="pref_load_questions"
