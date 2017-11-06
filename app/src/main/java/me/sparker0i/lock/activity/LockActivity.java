@@ -118,7 +118,7 @@ public class LockActivity extends AppCompatActivity {
                                 Gson gson = gsonBuilder.create();
                                 posts = gson.fromJson(s, UnlockModel.class);
                                 System.out.println(gson.toJson(posts));
-                                if (posts.images.get(0).transaction.status.equals("success")) {
+                                if (posts.Errors == null) {
                                     dialog.hide();
                                     unlock();
                                 }
