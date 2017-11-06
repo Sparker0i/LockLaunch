@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -13,9 +14,13 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.github.florent37.camerafragment.CameraFragment;
 import com.github.florent37.camerafragment.configuration.Configuration;
 import com.github.florent37.camerafragment.listeners.CameraFragmentResultListener;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.kairos.Kairos;
 import com.kairos.KairosListener;
 
@@ -24,18 +29,20 @@ import org.json.JSONException;
 import java.io.UnsupportedEncodingException;
 
 import me.sparker0i.lawnchair.R;
+import me.sparker0i.lock.model.AddModel;
 
 public class AddFace extends AppCompatActivity {
     CameraFragment cameraFragment;
     Permissions per;
     Context context;
-
+    MaterialDialog dialog;
+    AddModel posts;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_face);
-
+        context = this;
 
         per = new Permissions(this);
         if (ContextCompat.checkSelfPermission(this , Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
@@ -90,7 +97,29 @@ public class AddFace extends AppCompatActivity {
                         KairosListener listener = new KairosListener() {
                             @Override
                             public void onSuccess(String s) {
-                                Log.i("Kairos Response" , s);
+                                GsonBuilder gsonBuilder = new GsonBuilder();
+                                gsonBuilder.setDateFormat("M/d/yy hh:mm a");
+                                Gson gson = gsonBuilder.create();
+                                posts = gson.fromJson(s, AddModel.class);
+                                System.out.println(gson.toJson(posts));
+                                dialog.dismiss();
+                                if (posts.Errors == null) {
+                                    Log.i("True" , "No Error");
+                                    finish();
+                                }
+                                else {
+                                    new MaterialDialog.Builder(context)
+                                            .title("Error")
+                                            .content(posts.Errors.get(0).Message)
+                                            .positiveText("OK")
+                                            .onPositive(new MaterialDialog.SingleButtonCallback() {
+                                                @Override
+                                                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                                    dialog.dismiss();
+                                                }
+                                            })
+                                            .show();
+                                }
                             }
 
                             @Override
@@ -98,7 +127,7 @@ public class AddFace extends AppCompatActivity {
                                 Log.i("Kairos Fail" , s);
                             }
                         };
-                        EditText ed = (EditText) findViewById(R.id.name);
+                        EditText ed = findViewById(R.id.name);
                         Bitmap image = BitmapFactory.decodeFile(filePath);
                         String subjectId = ed.getText().toString() ;
                         String galleryId = "images";
@@ -106,6 +135,13 @@ public class AddFace extends AppCompatActivity {
                         String multipleFaces = "false";
                         String minHeadScale = "0.25";
                         try {
+                            dialog = new MaterialDialog.Builder(context)
+                                    .title("Please Wait")
+                                    .content("Loading")
+                                    .cancelable(false)
+                                    .progress(true , 0)
+                                    .build();
+                            dialog.show();
                             mykairos.enroll(image,
                                     subjectId,
                                     galleryId,

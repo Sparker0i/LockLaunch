@@ -16,9 +16,13 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.github.florent37.camerafragment.CameraFragment;
 import com.github.florent37.camerafragment.configuration.Configuration;
 import com.github.florent37.camerafragment.listeners.CameraFragmentResultListener;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.kairos.Kairos;
 import com.kairos.KairosListener;
 
@@ -28,6 +32,7 @@ import java.io.UnsupportedEncodingException;
 
 import me.sparker0i.lawnchair.Launcher;
 import me.sparker0i.lawnchair.R;
+import me.sparker0i.lock.model.UnlockModel;
 
 @SuppressWarnings("deprecation")
 public class LockActivity extends AppCompatActivity {
@@ -36,6 +41,8 @@ public class LockActivity extends AppCompatActivity {
     Handler handler;
     Permissions per;
     CameraFragment cameraFragment;
+    UnlockModel posts;
+    MaterialDialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,12 +108,40 @@ public class LockActivity extends AppCompatActivity {
                     @Override
                     public void onPhotoTaken(byte[] bytes, String filePath) {
                         Log.i("location", filePath);
+                        dialog = new MaterialDialog.Builder(context)
+                                .title("Please Wait")
+                                .content("Loading")
+                                .cancelable(false)
+                                .progress(true , 0)
+                                .build();
+                        dialog.show();
                         Kairos kairos = new Kairos();
                         kairos.setAuthentication(context , "91e3fef9" , "25d5338d52c40ecc14324d2b7aa3fdf6");
                         KairosListener listener = new KairosListener() {
                             @Override
                             public void onSuccess(String s) {
-                                Log.i("Kairos Response" , s);
+                                GsonBuilder gsonBuilder = new GsonBuilder();
+                                gsonBuilder.setDateFormat("M/d/yy hh:mm a");
+                                Gson gson = gsonBuilder.create();
+                                posts = gson.fromJson(s, UnlockModel.class);
+                                System.out.println(gson.toJson(posts));
+                                if (posts.images.get(0).transaction.status.equals("success")) {
+                                    dialog.hide();
+                                    unlock();
+                                }
+                                else {
+                                    new MaterialDialog.Builder(context)
+                                            .title("Error")
+                                            .content(posts.Errors.get(0).Message)
+                                            .positiveText("OK")
+                                            .onPositive(new MaterialDialog.SingleButtonCallback() {
+                                                @Override
+                                                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                                    dialog.dismiss();
+                                                }
+                                            })
+                                            .show();
+                                }
                             }
 
                             @Override
@@ -114,20 +149,6 @@ public class LockActivity extends AppCompatActivity {
                                 Log.i("Kairos Fail" , s);
                             }
                         };
-                        /*
-                        Bitmap image = BitmapFactory.decodeFile(filepath);
-                        String subjectId = "Lal";
-                        String galleryId = "images
-                        String multipleFaces = "false";
-                        String minHeadScale = "0.25";
-                        myKairos.enroll(image,
-                                        subjectId,
-                                        galleryId,
-                                        selector,
-                                        multipleFaces,
-                                        minHeadScale,
-                                        listener);
-                        */
                         Bitmap image = BitmapFactory.decodeFile(filePath);
                         String galleryId = "images";
                         String selector = "FULL";
@@ -165,7 +186,6 @@ public class LockActivity extends AppCompatActivity {
                 else{
                     per.permissionDenied();
                 }
-
         }
     }
 
