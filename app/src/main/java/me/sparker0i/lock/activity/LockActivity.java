@@ -15,6 +15,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -43,6 +44,7 @@ public class LockActivity extends AppCompatActivity {
     CameraFragment cameraFragment;
     UnlockModel posts;
     MaterialDialog dialog;
+    int counter = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,8 +120,8 @@ public class LockActivity extends AppCompatActivity {
                                 Gson gson = gsonBuilder.create();
                                 posts = gson.fromJson(s, UnlockModel.class);
                                 System.out.println(gson.toJson(posts));
+                                dialog.hide();
                                 if (posts.Errors == null) {
-                                    dialog.hide();
                                     unlock();
                                 }
                                 else {
@@ -134,6 +136,20 @@ public class LockActivity extends AppCompatActivity {
                                                 }
                                             })
                                             .show();
+                                    counter++;
+                                    int value = 3;
+                                    value = value - counter;
+                                    if(counter == 3){
+                                        Toast.makeText(getApplicationContext(), "Going for the pinmode",Toast.LENGTH_LONG).show();
+                                        getSupportFragmentManager().beginTransaction()
+                                                .replace(R.id.fragment, new PinLockFragment(), "hh")
+                                                .commit();
+
+                                    }
+                                    else {
+                                        Toast.makeText(getApplicationContext(), value+" more for the pin lock mode",Toast.LENGTH_LONG).show();
+
+                                    }
                                 }
                             }
 
@@ -182,7 +198,7 @@ public class LockActivity extends AppCompatActivity {
         }
     }
 
-    private void unlock() {
+    public void unlock() {
         Launcher.setLocked(false);
         finish();
     }
