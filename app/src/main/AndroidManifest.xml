@@ -199,8 +199,12 @@
         <activity
             android:name="me.sparker0i.lock.activity.LockSettingsActivity"
             android:theme="@style/Theme.AppCompat.Light" />
-        <activity android:name="me.sparker0i.lock.activity.AddFace"
-            android:theme="@style/Theme.AppCompat.Light"/>
+
+        <activity
+            android:name="me.sparker0i.lock.activity.AddFace"
+            android:theme="@style/Theme.AppCompat.Light" />
+        <activity android:name="me.sparker0i.lock.activity.PinActivity"
+            android:theme="@style/Theme.AppCompat"/>
     </application>
 
 </manifest>

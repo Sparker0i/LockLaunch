@@ -61,6 +61,7 @@ import me.sparker0i.lawnchair.preferences.IPreferenceProvider;
 import me.sparker0i.lawnchair.preferences.PreferenceFlags;
 import me.sparker0i.lock.activity.AddFace;
 import me.sparker0i.lock.activity.LockSettingsActivity;
+import me.sparker0i.lock.activity.PinActivity;
 import me.sparker0i.lock.service.ScreenService;
 import me.sparker0i.question.activity.CategoryChooser;
 
@@ -308,15 +309,10 @@ public class SettingsActivity extends AppCompatActivity implements PreferenceFra
                         dialog.setContentView(R.layout.dialog_translators);
                         dialog.show();
                         break;
-                    case FeatureFlags.KEY_LOAD_QUESTIONS:
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                            new me.sparker0i.question.Utilities(getContext()).loadQuestions();
-                        else
-                            startActivity(new Intent(getActivity() , LockSettingsActivity.class));
+                    case FeatureFlags.KEY_LOAD_PIN:
+                        startActivity(new Intent(getActivity(), PinActivity.class));
                         break;
-                    case FeatureFlags.KEY_SELECT_CATEGORIES:
-                        startActivity(new Intent(getActivity() , CategoryChooser.class));
-                        break;
+
                     case FeatureFlags.KEY_ADD_FACE:
                         startActivity(new Intent(getActivity() , AddFace.class));
                     default:

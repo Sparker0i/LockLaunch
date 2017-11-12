@@ -14,15 +14,11 @@
             android:dependency="pref_enable_lock" />
 
         <Preference
-            android:key="pref_load_questions"
-            android:title="@string/pref_load_questions"
-            android:summary="Click to load a new set of questions (if available)"
+            android:key="pref_load_pin"
+            android:title="Add a Backup pin"
+            android:summary="The pin will automatically triggered when the app fails to find users face within 3 attempts"
             android:dependency="pref_enable_lock" />
 
-        <Preference
-            android:key="pref_select_categories"
-            android:title="@string/pref_select_categories"
-            android:summary="Select the category of questions you want to see on the lock screen"
-            android:dependency="pref_enable_lock" />
+
     </PreferenceCategory>
 </PreferenceScreen>
